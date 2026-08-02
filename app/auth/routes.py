@@ -66,7 +66,7 @@ def register():
     return render_template('register.html', form=form)
 
 
-@auth.route('/register/admiing', methods=['GET', 'POST'])
+@auth.route('/register/admin', methods=['GET', 'POST'])
 def register_admin():
     """Hidden admin registration endpoint. Use an obscure URL to avoid accidental discovery."""
     form = RegisterForm()

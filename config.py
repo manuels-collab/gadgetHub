@@ -16,3 +16,33 @@ class Config:
 
     PAYSTACK_SECRET_KEY = os.getenv("PAYMENT_SECRET_KEY") or os.getenv("payment_secret_key")
     PAYSTACK_PUBLIC_KEY = os.getenv("PAYMENT_PUBLIC_KEY") or os.getenv("payment_public_key")
+
+
+class DevelopmentConfig(Config):
+    """Development configuration - safe defaults for local work."""
+    ENV = 'development'
+    DEBUG = True
+    # Prefer a dedicated DEV database url, fall back to generic DATABASE_URL, then sqlite.
+    SQLALCHEMY_DATABASE_URI = (
+        os.getenv('DEV_DATABASE_URL') or
+        os.getenv('DATABASE_URL') or
+        'sqlite:///dev.db'
+    )
+    SQLALCHEMY_ECHO = False
+
+
+class ProductionConfig(Config):
+    """Production configuration - secure defaults."""
+    ENV = 'production'
+    DEBUG = False
+    # Production should provide DATABASE_URL via environment.
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+    SQLALCHEMY_ECHO = False
+
+
+# Config selection helper
+config = {
+    'development': DevelopmentConfig,
+    'production': ProductionConfig,
+    'default': DevelopmentConfig,
+}
