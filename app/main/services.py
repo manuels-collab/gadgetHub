@@ -18,7 +18,7 @@ class StoreService:
         ).scalars().all()
 
     @staticmethod
-    def get_featured_products(limit: int = 8):
+    def get_featured_products(limit: int = 4):
         return db.session.execute(
             db.select(Product)
             .filter_by(is_featured=True)

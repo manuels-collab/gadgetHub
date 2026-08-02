@@ -13,7 +13,7 @@ class StoreService:
         return db.session.execute(db.select(Category).order_by(Category.name.asc())).scalars().all()
 
     @staticmethod
-    def get_featured_products(limit: int = 8) -> list:
+    def get_featured_products(limit: int = 4) -> list:
         """Retrieves products explicitly marked as featured by systems administrators.
         
         Args:

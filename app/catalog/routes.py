@@ -7,25 +7,26 @@ from ..main.storeservice import StoreService # Reuses the layout fetchers we bui
 from ..extensions import db
 from ..models.models import Brand
 from ..main.review_service import ReviewService
+from ..main.async_utils import run_blocking
 catalog_bp = Blueprint('catalog', __name__)
 
 @catalog_bp.route('/products')
 @catalog_bp.route('/category/<string:category_slug>')
-def product_listing(category_slug=None):
+async def product_listing(category_slug=None):
     """Unified endpoint processing showroom grids, filters, and global multi-string lookups."""
     # Read incoming request parameters
     brand_id = request.args.get('brand', type=int)
     search_query = request.args.get('q', type=str)
     
     # Process queries using service models
-    products = CatalogService.get_filtered_products(
-        category_slug=category_slug, 
-        brand_id=brand_id, 
+    products = await run_blocking(lambda: CatalogService.get_filtered_products(
+        category_slug=category_slug,
+        brand_id=brand_id,
         search_query=search_query
-    )
-    
-    categories = StoreService.get_all_categories()
-    brands = db.session.execute(db.select(Brand)).scalars().all()
+    ))
+
+    categories = await run_blocking(StoreService.get_all_categories)
+    brands = await run_blocking(lambda: db.session.execute(db.select(Brand)).scalars().all())
     
     return render_template(
         "catalog/listing.html",
@@ -40,10 +41,10 @@ def product_listing(category_slug=None):
 
 
 @catalog_bp.route('/product/<int:product_id>', methods=['GET', 'POST'])
-def product_details(product_id):
+async def product_details(product_id):
     """Renders comprehensive catalog profile pages with live review modules."""
-    product = CatalogService.get_product_details(product_id) or abort(404)
-    related_products = CatalogService.get_related_products(product, limit=4)
+    product = await run_blocking(lambda: CatalogService.get_product_details(product_id)) or abort(404)
+    related_products = await run_blocking(lambda: CatalogService.get_related_products(product, limit=4))
     
     # Instantiate the review form instance configuration
     form = ReviewForm()
@@ -54,7 +55,7 @@ def product_details(product_id):
             flash("You must be logged in to leave a review.", "warning")
             return redirect(url_for('auth.login'))
             
-        success = ReviewService.add_product_review(current_user.id, product_id, form)
+        success = await run_blocking(lambda: ReviewService.add_product_review(current_user.id, product_id, form))
         if success:
             flash("Thank you! Your product review has been published.", "success")
         else:
