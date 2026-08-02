@@ -8,7 +8,8 @@
     muted
     loop
     playsinline
-    poster="{{ url_for('static', filename='uploads/7989488-hd_1920_1080_25fps.mp4') }}"
+    preload="auto"
+    poster="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=80"
   >
     <source
       src="{{ url_for('static', filename='uploads/7989488-hd_1920_1080_25fps.mp4') }}"
@@ -19,7 +20,7 @@
   <div class="hero-overlay"></div>
 
   <div class="hero-content">
-    <span class="hero-badge"> Premium Shopping Experience </span>
+    <span class="hero-badge">Premium Shopping Experience</span>
 
     <h1>Discover Premium Selections</h1>
 
@@ -33,6 +34,25 @@
     </a>
   </div>
 </section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const heroVideo = document.querySelector(".hero-video");
+    if (heroVideo) {
+      heroVideo.addEventListener("canplay", function () {
+        heroVideo.classList.add("is-ready");
+      });
+
+      heroVideo.addEventListener("playing", function () {
+        heroVideo.classList.add("is-ready");
+      });
+
+      heroVideo.play().catch(function () {
+        // Ignore autoplay errors; the poster remains visible until interaction.
+      });
+    }
+  });
+</script>
 
 <section class="categories section">
   <div class="section-header">
@@ -87,7 +107,7 @@
     </div>
 
     <div class="spotlight-content">
-      <span class="spotlight-tag"> Product of the Week </span>
+      <span class="spotlight-tag">Product of the Week</span>
 
       <h2>{{ product_of_the_week.name }}</h2>
 
@@ -128,7 +148,7 @@
 
       <div class="product-info">
         <h3>
-          <a href="/product/{{ product.id }}"> {{ product.name }} </a>
+          <a href="/product/{{ product.id }}">{{ product.name }}</a>
         </h3>
 
         <div class="product-rating">
@@ -145,11 +165,11 @@
 
           {% if product.stock > 0 %}
 
-          <span class="stock in-stock"> {{ product.stock }} In Stock </span>
+          <span class="stock in-stock">{{ product.stock }} In Stock</span>
 
           {% else %}
 
-          <span class="stock out-stock"> Out of Stock </span>
+          <span class="stock out-stock">Out of Stock</span>
 
           {% endif %}
         </div>
