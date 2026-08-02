@@ -1,0 +1,27 @@
+{% extends "base.html" %} {% block title %}Payment Cancelled{% endblock %} {%
+block content %}
+<main class="checkout-cancel-page container">
+  <section class="cancel-card">
+    <div class="cancel-icon">
+      <i class="fa-solid fa-ban"></i>
+    </div>
+
+    <h1 class="cancel-title">Payment Cancelled</h1>
+    <p class="cancel-message">
+      Your payment was cancelled. Your cart is still available if you want to
+      try again.
+    </p>
+
+    <div class="cancel-actions">
+      <a
+        href="{{ url_for('checkout.paystack_checkout') }}"
+        class="btn btn-primary"
+        >Try Again</a
+      >
+      <a href="{{ url_for('cart.view_cart') }}" class="btn btn-secondary"
+        >Back to Cart</a
+      >
+    </div>
+  </section>
+</main>
+{% endblock %}

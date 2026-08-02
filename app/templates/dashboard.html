@@ -1,0 +1,106 @@
+{% extends "base.html" %} {% block title %}Dashboard{% endblock %} {% block
+content %}
+
+<section class="dashboard">
+  <div class="dashboard-header">
+    <div>
+      <h1>Welcome back, {{ user.first_name }} {{ user.last_name }}!</h1>
+
+      <p>
+        Account Level:
+        <strong>
+          {% if user.is_admin %} Administrator {% else %} Standard Customer {%
+          endif %}
+        </strong>
+      </p>
+    </div>
+
+    <div class="dashboard-actions">
+      {% if user.is_admin %}
+      <a href="{{ url_for('admin.dashboard') }}" class="btn">
+        <i class="fa-solid fa-user-shield"></i>
+        <span>Admin Panel</span>
+      </a>
+      {% endif %}
+
+      <a href="{{ url_for('auth.logout') }}" class="btn btn-outline">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Logout</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="dashboard-grid">
+    <div class="dashboard-card">
+      <div class="card-title">
+        <i class="fa-solid fa-user"></i>
+        <h3>Profile Information</h3>
+      </div>
+
+      <ul class="profile-list">
+        <li>
+          <strong>Username</strong>
+          <span>@{{ user.username }}</span>
+        </li>
+
+        <li>
+          <strong>Email</strong>
+          <span>{{ user.email }}</span>
+        </li>
+
+        <li>
+          <strong>Phone</strong>
+          <span>{{ user.phone or "No number provided" }}</span>
+        </li>
+
+        <li>
+          <strong>Joined</strong>
+          <span>{{ user.date_joined.strftime('%B %d, %Y') }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="dashboard-card">
+      <div class="card-title">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <h3>Shopping Activity</h3>
+      </div>
+
+      <div class="shopping-stats">
+        <div class="shopping-stat">
+          <span>Cart Items</span>
+          <strong>{{ cart_items }}</strong>
+        </div>
+        <div class="shopping-stat">
+          <span>Orders</span>
+          <strong>{{ order_count }}</strong>
+        </div>
+        <div class="shopping-stat">
+          <span>Payments</span>
+          <strong>{{ payments_count }}</strong>
+        </div>
+        <div class="shopping-stat">
+          <span>Total Spent</span>
+          <strong>₦{{ "{:,.2f}".format(total_spent) }}</strong>
+        </div>
+      </div>
+
+      <div class="dashboard-links">
+        <a href="{{ url_for('cart.view_cart') }}">
+          <i class="fa-solid fa-shopping-cart"></i>
+          View Cart
+        </a>
+        <a href="{{ url_for('checkout.place_order') }}">
+          <i class="fa-solid fa-credit-card"></i>
+          Checkout
+        </a>
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-outline">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          Logout
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

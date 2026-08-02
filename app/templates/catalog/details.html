@@ -1,0 +1,238 @@
+{% extends "base.html" %} {% block title %}{{ product.name }}{% endblock %} {%
+block content %}
+
+<main class="product-details-page container">
+  <!-- ========================= -->
+  <!-- Product Details -->
+  <!-- ========================= -->
+
+  <section class="product-details">
+    <!-- Gallery -->
+    <div class="product-gallery">
+      <div class="product-main-image">
+        <img
+          src="{% if product.image and product.image != 'placeholder.png' %}{{ url_for('static', filename='uploads/' + product.image) }}{% else %}https://placeholder.com{% endif %}"
+          alt="{{ product.name }}"
+        />
+      </div>
+
+      {% if product.product_image %}
+      <div class="product-thumbnails">
+        <h4 class="gallery-title">More Images</h4>
+
+        <div class="thumbnail-list">
+          <button type="button" class="thumbnail active">
+            <img
+              src="{% if product.image and product.image != 'placeholder.png' %}{{ url_for('static', filename='uploads/' + product.image) }}{% else %}https://placeholder.com{% endif %}"
+              alt="{{ product.name }}"
+            />
+          </button>
+
+          {% for gallery_img in product.product_image %}
+          <button type="button" class="thumbnail">
+            <img
+              src="{{ url_for('static', filename='uploads/' + gallery_img.image) }}"
+              alt="Gallery Image"
+            />
+          </button>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Product Info -->
+
+    <div class="product-information">
+      <span class="product-category">
+        {{ product.category.name }} / {{ product.brand.name }}
+      </span>
+
+      <h1 class="product-title">{{ product.name }}</h1>
+
+      <div class="product-meta">
+        <span class="product-rating">
+          <i class="fa-solid fa-star"></i>
+
+          {{ product.average_rating | default('0') }}/5
+        </span>
+
+        <span class="divider"></span>
+
+        <span class="product-sku"> SKU: {{ product.sku }} </span>
+      </div>
+
+      <div class="product-price-card">
+        <span class="price-label"> Retail Price </span>
+
+        <span class="product-price">
+          ₦{{ "{:,.2f}".format(product.price) }}
+        </span>
+      </div>
+
+      <div class="product-description">{{ product.description }}</div>
+
+      <div class="product-actions">
+        {% if product.stock > 0 %}
+
+        <form
+          action="{{ url_for('cart.add_to_cart', product_id=product.id) }}"
+          method="POST"
+          class="add-cart-form"
+        >
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+          <div class="quantity-group">
+            <label for="quantity"> Quantity </label>
+
+            <input
+              id="quantity"
+              type="number"
+              name="quantity"
+              value="1"
+              min="1"
+              max="{{ product.stock }}"
+            />
+          </div>
+
+          <button type="submit" class="btn btn-primary add-cart-btn">
+            <i class="fa-solid fa-cart-shopping"></i>
+
+            <span>Add to Cart</span>
+          </button>
+        </form>
+
+        {% else %}
+
+        <button class="btn btn-secondary sold-out-btn" disabled>
+          <i class="fa-solid fa-ban"></i>
+
+          <span>Sold Out</span>
+        </button>
+
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <section class="reviews-section">
+    <!-- Reviews -->
+    <div class="reviews-list">
+      <h2 class="reviews-title">
+        Customer Reviews ({{ product.reviews|length }})
+      </h2>
+
+      {% if product.reviews %} {% for review in product.reviews %}
+
+      <article class="review-card">
+        <div class="review-header">
+          <div class="review-info">
+            <div class="review-stars">
+              <i class="fas fa-star"></i>
+              {{ review.rating }}/5
+            </div>
+
+            <h3 class="review-title">{{ review.title }}</h3>
+          </div>
+
+          <span class="review-date">
+            {{ review.created_at.strftime('%b %d, %Y') }}
+          </span>
+        </div>
+
+        <p class="review-comment">{{ review.comment }}</p>
+
+        <div class="review-author">
+          <i class="fas fa-user-circle"></i>
+
+          <span>
+            {{ review.user.first_name }} {{ review.user.last_name }} (@{{
+            review.user.username }})
+          </span>
+        </div>
+      </article>
+
+      {% endfor %} {% else %}
+
+      <div class="empty-review-state">
+        <i class="far fa-comment-dots"></i>
+
+        <h3>No Reviews Yet</h3>
+
+        <p>Be the first customer to review this product.</p>
+      </div>
+
+      {% endif %}
+    </div>
+
+    <!-- ========================================= -->
+    <!-- Review Form                              -->
+    <!-- ========================================= -->
+    <aside class="review-form-sidebar">
+      <div class="review-form-card">
+        <h3 class="review-form-title">Leave a Review</h3>
+
+        {% if current_user.is_authenticated %}
+
+        <form method="POST" class="review-form" novalidate>
+          {{ form.csrf_token }}
+
+          <!-- Rating -->
+          <div
+            class="form-field-wrapper {% if form.rating.errors %}field-has-error{% endif %}"
+          >
+            {{ form.rating.label(class="form-label") }} {{ form.rating(
+            class="form-input", type="number", min="1", max="5" ) }} {% for
+            error in form.rating.errors %}
+            <span class="error-message-item"> {{ error }} </span>
+            {% endfor %}
+          </div>
+
+          <!-- Title -->
+          <div
+            class="form-field-wrapper {% if form.title.errors %}field-has-error{% endif %}"
+          >
+            {{ form.title.label(class="form-label") }} {{ form.title(
+            class="form-input", placeholder="Review title" ) }} {% for error in
+            form.title.errors %}
+            <span class="error-message-item"> {{ error }} </span>
+            {% endfor %}
+          </div>
+
+          <!-- Comment -->
+          <div
+            class="form-field-wrapper {% if form.comment.errors %}field-has-error{% endif %}"
+          >
+            {{ form.comment.label(class="form-label") }} {{ form.comment(
+            class="form-input", rows="5", placeholder="Share your experience..."
+            ) }} {% for error in form.comment.errors %}
+            <span class="error-message-item"> {{ error }} </span>
+            {% endfor %}
+          </div>
+
+          {{ form.submit( class="btn btn-primary review-submit-btn" ) }}
+        </form>
+
+        {% else %}
+
+        <div class="login-required">
+          <i class="fas fa-lock login-icon"></i>
+
+          <p>Please sign in to write a review.</p>
+
+          <a
+            href="{{ url_for('auth.login') }}"
+            class="btn btn-primary login-btn"
+          >
+            <i class="fas fa-sign-in-alt"></i>
+            Sign In
+          </a>
+        </div>
+
+        {% endif %}
+      </div>
+    </aside>
+  </section>
+</main>
+
+{% endblock %}

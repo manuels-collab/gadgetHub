@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Manage Coupons{% endblock %}
+
+{% block content %}
+
+<section class="admin-page">
+
+    <div class="admin-header">
+
+        <div>
+            <h1>Coupon Management</h1>
+            <p>Create and manage promotional discount codes for your customers.</p>
+        </div>
+
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Dashboard
+        </a>
+
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+
+    <div class="flash-messages">
+
+        {% for category, message in messages %}
+        <div class="flash-message flash-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+    {% endwith %}
+
+    <div class="admin-grid">
+
+        <div class="admin-card">
+
+            <div class="card-header">
+                <h2>
+                    <i class="fa-solid fa-ticket"></i>
+                    Create Coupon
+                </h2>
+            </div>
+
+            <form
+                class="admin-form"
+                method="POST"
+                action="{{ url_for('admin.manage_coupons') }}"
+            >
+
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Coupon Code
+                    </label>
+
+                    <div class="input-group">
+
+                        <i class="fa-solid fa-tag"></i>
+
+                        <input
+                            type="text"
+                            name="code"
+                            class="form-input"
+                            placeholder="SUMMER50"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Discount (%)
+                    </label>
+
+                    <div class="input-group">
+
+                        <i class="fa-solid fa-percent"></i>
+
+                        <input
+                            type="number"
+                            name="discount"
+                            min="1"
+                            max="100"
+                            class="form-input"
+                            placeholder="20"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Expiration Date
+                    </label>
+
+                    <input
+                        type="date"
+                        name="expiry_date"
+                        class="form-input"
+                        required
+                    >
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary admin-btn"
+                >
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    Create Coupon
+
+                </button>
+
+            </form>
+
+        </div>
+
+        <div class="admin-card">
+
+            <div class="card-header">
+
+                <h2>
+
+                    <i class="fa-solid fa-list-check"></i>
+
+                    Active Coupons
+
+                </h2>
+
+            </div>
+
+            <div class="table-wrapper">
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Code</th>
+                            <th>Discount</th>
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% if coupons %}
+
+                        {% for coupon in coupons %}
+
+                        <tr>
+
+                            <td>
+
+                                <code>{{ coupon.code }}</code>
+
+                            </td>
+
+                            <td>
+
+                                <strong>{{ coupon.discount }}%</strong>
+
+                            </td>
+
+                            <td>
+
+                                {% if coupon.is_valid %}
+
+                                <span class="status-badge success">
+
+                                    <i class="fa-solid fa-circle-check"></i>
+
+                                    Active
+
+                                </span>
+
+                                {% else %}
+
+                                <span class="status-badge danger">
+
+                                    <i class="fa-solid fa-circle-xmark"></i>
+
+                                    Expired
+
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                        {% else %}
+
+                        <tr>
+
+                            <td colspan="3" class="empty-table">
+
+                                No coupons available.
+
+                            </td>
+
+                        </tr>
+
+                        {% endif %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

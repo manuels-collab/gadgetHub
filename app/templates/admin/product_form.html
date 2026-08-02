@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - {{ action }} Product{% endblock %}
+
+{% block content %}
+<main class="admin-form-viewport" id="product-action-form-page">
+
+    <header class="admin-form-header">
+        <h1 class="admin-form-title">{{ action }} Product</h1>
+        <p class="admin-form-subtitle">
+            Create or update your product information and inventory details.
+        </p>
+    </header>
+
+    <form class="admin-data-form" id="product-processing-form" method="POST" enctype="multipart/form-data" novalidate>
+
+        {{ form.csrf_token }}
+
+        <fieldset class="form-group-fieldset">
+            <legend class="form-group-legend">Product Information</legend>
+
+            <div class="form-field-wrapper {% if form.name.errors %}field-has-error{% endif %}">
+                {{ form.name.label(class="form-label") }}
+                {{ form.name(class="form-input text-input", placeholder="Product name") }}
+                {% for error in form.name.errors %}
+                    <span class="error-message-item">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="form-field-wrapper {% if form.description.errors %}field-has-error{% endif %}">
+                {{ form.description.label(class="form-label") }}
+                {{ form.description(class="form-input text-textarea", rows="5", placeholder="Product description") }}
+                {% for error in form.description.errors %}
+                    <span class="error-message-item">{{ error }}</span>
+                {% endfor %}
+            </div>
+        </fieldset>
+
+        <fieldset class="form-group-fieldset">
+            <legend class="form-group-legend">Pricing & Inventory</legend>
+
+            <div class="form-row-split">
+
+                <div class="form-field-wrapper {% if form.price.errors %}field-has-error{% endif %}">
+                    {{ form.price.label(class="form-label") }}
+                    {{ form.price(class="form-input numerical-input", placeholder="e.g. 2999") }}
+                    {% for error in form.price.errors %}
+                        <span class="error-message-item">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="form-field-wrapper {% if form.discounted_price.errors %}field-has-error{% endif %}">
+                    {{ form.discounted_price.label(class="form-label") }}
+                    {{ form.discounted_price(class="form-input numerical-input", placeholder="Optional") }}
+                    {% for error in form.discounted_price.errors %}
+                        <span class="error-message-item">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+            <div class="form-row-split">
+
+                <div class="form-field-wrapper {% if form.stock.errors %}field-has-error{% endif %}">
+                    {{ form.stock.label(class="form-label") }}
+                    {{ form.stock(class="form-input numerical-input") }}
+                    {% for error in form.stock.errors %}
+                        <span class="error-message-item">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="form-field-wrapper {% if form.sku.errors %}field-has-error{% endif %}">
+                    {{ form.sku.label(class="form-label") }}
+                    {{ form.sku(class="form-input text-input") }}
+                    {% for error in form.sku.errors %}
+                        <span class="error-message-item">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+            <div class="form-field-wrapper checkbox-wrapper">
+                <label class="form-checkbox-label-wrapper">
+                    {{ form.is_featured(class="form-checkbox-input") }}
+                    <span>Feature this product on the homepage</span>
+                </label>
+            </div>
+        </fieldset>
+
+        <fieldset class="form-group-fieldset">
+            <legend class="form-group-legend">Category & Media</legend>
+
+            <div class="form-row-split">
+
+                <div class="form-field-wrapper">
+                    {{ form.brand_id.label(class="form-label") }}
+                    {{ form.brand_id(class="form-input structural-select-dropdown") }}
+                </div>
+
+                <div class="form-field-wrapper">
+                    {{ form.category_id.label(class="form-label") }}
+                    {{ form.category_id(class="form-input structural-select-dropdown") }}
+                </div>
+
+            </div>
+
+            <div class="form-field-wrapper {% if form.image.errors %}field-has-error{% endif %}">
+                {{ form.image.label(class="form-label") }}
+                {{ form.image(class="form-input file-input") }}
+
+                {% if action == "Edit" %}
+                    <p class="field-helper-notice-text">
+                        Upload a new image to replace the current one.
+                    </p>
+                {% endif %}
+
+                {% for error in form.image.errors %}
+                    <span class="error-message-item">{{ error }}</span>
+                {% endfor %}
+            </div>
+        </fieldset>
+
+        <div class="form-action-wrapper">
+
+            <a href="{{ url_for('admin.manage_inventory') }}" class="btn btn-secondary">
+                Cancel
+            </a>
+
+            {{ form.submit(class="btn btn-primary btn-submit") }}
+
+        </div>
+
+    </form>
+
+</main>
+{% endblock %}

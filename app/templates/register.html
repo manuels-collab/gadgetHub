@@ -1,0 +1,191 @@
+{% extends "base.html" %} {% block title %}Create an Account{% endblock %} {%
+block content %}
+
+<section class="auth-page">
+  <div class="auth-card register-card">
+    <div class="auth-header">
+      <div class="auth-icon">
+        <i class="fa-solid fa-user-plus"></i>
+      </div>
+
+      <h1>Create Account</h1>
+
+      <p>Join GadgetHub by completing the registration form below.</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %}
+
+    <div class="flash-messages">
+      {% for category, message in messages %}
+      <div class="flash-message flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+
+    {% endif %} {% endwith %}
+
+    <form
+      class="auth-form register-form"
+      method="POST"
+      action="{{ url_for('auth.register') }}"
+      enctype="multipart/form-data"
+      novalidate
+    >
+      {{ form.csrf_token }}
+
+      <div class="form-section">
+        <h3>Account Information</h3>
+
+        <div
+          class="form-group {% if form.username.errors %}has-error{% endif %}"
+        >
+          {{ form.username.label(class="form-label") }}
+
+          <div class="input-group">
+            <i class="fa-solid fa-user"></i>
+
+            {{ form.username(class="form-input", placeholder="Choose a
+            username") }}
+          </div>
+
+          {% if form.username.errors %}
+          <div class="form-errors">
+            {% for error in form.username.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="form-group {% if form.email.errors %}has-error{% endif %}">
+          {{ form.email.label(class="form-label") }}
+
+          <div class="input-group">
+            <i class="fa-solid fa-envelope"></i>
+
+            {{ form.email(class="form-input", placeholder="name@example.com") }}
+          </div>
+
+          {% if form.email.errors %}
+          <div class="form-errors">
+            {% for error in form.email.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+
+        <div
+          class="form-group {% if form.password.errors %}has-error{% endif %}"
+        >
+          {{ form.password.label(class="form-label") }}
+
+          <div class="input-group">
+            <i class="fa-solid fa-lock"></i>
+
+            {{ form.password(class="form-input", placeholder="Enter a secure
+            password") }}
+          </div>
+
+          {% if form.password.errors %}
+          <div class="form-errors">
+            {% for error in form.password.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Personal Information</h3>
+
+        <div class="split-row">
+          <div
+            class="form-group {% if form.first_name.errors %}has-error{% endif %}"
+          >
+            {{ form.first_name.label(class="form-label") }}
+
+            <div class="input-group">
+              <i class="fa-solid fa-id-card"></i>
+
+              {{ form.first_name(class="form-input", placeholder="John") }}
+            </div>
+
+            {% if form.first_name.errors %}
+            <div class="form-errors">
+              {% for error in form.first_name.errors %}
+              <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+
+          <div
+            class="form-group {% if form.last_name.errors %}has-error{% endif %}"
+          >
+            {{ form.last_name.label(class="form-label") }}
+
+            <div class="input-group">
+              <i class="fa-solid fa-id-card"></i>
+
+              {{ form.last_name(class="form-input", placeholder="Doe") }}
+            </div>
+
+            {% if form.last_name.errors %}
+            <div class="form-errors">
+              {% for error in form.last_name.errors %}
+              <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="form-group {% if form.phone.errors %}has-error{% endif %}">
+          {{ form.phone.label(class="form-label") }}
+
+          <div class="input-group">
+            <i class="fa-solid fa-phone"></i>
+
+            {{ form.phone(class="form-input", placeholder="+1234567890") }}
+          </div>
+
+          {% if form.phone.errors %}
+          <div class="form-errors">
+            {% for error in form.phone.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+
+        <div
+          class="form-group {% if form.profile_image.errors %}has-error{% endif %}"
+        >
+          {{ form.profile_image.label(class="form-label") }} {{
+          form.profile_image(class="file-input") }} {% if
+          form.profile_image.errors %}
+          <div class="form-errors">
+            {% for error in form.profile_image.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      {{ form.submit(class="btn auth-btn") }}
+    </form>
+
+    <div class="auth-footer">
+      <p>
+        Already have an account?
+
+        <a href="{{ url_for('auth.login') }}"> Login </a>
+      </p>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

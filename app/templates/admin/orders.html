@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Manage Orders{% endblock %}
+
+{% block content %}
+<main class="admin-viewport-wrapper" id="order-management-dashboard">
+
+    <header class="admin-view-header" id="orders-panel-header">
+        <div class="admin-header-title-block">
+            <h1 class="admin-view-title">Customer Orders & Fulfillment</h1>
+            <p class="admin-view-subtitle">
+                Review transactions, track order logs, and process invoices
+            </p>
+        </div>
+
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary" id="btn-orders-to-panel">
+            Back to Dashboard
+        </a>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages-container" id="orders-alert-wrapper">
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <section class="admin-table-section" id="orders-table-block">
+        <table class="admin-data-table" id="table-orders-master-list">
+            <thead>
+                <tr>
+                    <th>Order</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% if orders %}
+
+                    {% for order in orders %}
+                    <tr class="table-data-row">
+
+                        <td class="data-order-number">
+                            <code>#{{ order.order_number }}</code>
+                        </td>
+
+                        <td class="data-customer">
+                            <strong>{{ order.user.first_name }} {{ order.user.last_name }}</strong><br>
+                            <span class="txt-muted">@{{ order.user.username }}</span>
+                        </td>
+
+                        <td class="data-timestamp">
+                            {{ order.created_at.strftime('%Y-%m-%d %H:%M') }}
+                        </td>
+
+                        <td class="data-total">
+                            ₦{{ "{:,.2f}".format(order.total) }}
+                        </td>
+
+                        <td class="data-status">
+                            <span class="status-indicator-badge status-{{ order.status|lower }}">
+                                {{ order.status.value if hasattr(order.status, 'value') else order.status }}
+                            </span>
+                        </td>
+
+                        <td class="data-actions">
+                            <a href="{{ url_for('admin.view_order', id=order.id) }}" class="btn btn-secondary btn-small">
+                                View Details
+                            </a>
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+
+                {% else %}
+
+                    <tr>
+                        <td colspan="6" class="table-empty-fallback-text">
+                            No orders have been placed yet.
+                        </td>
+                    </tr>
+
+                {% endif %}
+            </tbody>
+        </table>
+    </section>
+
+</main>
+{% endblock %}

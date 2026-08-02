@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}My Wishlist{% endblock %}
+
+{% block content %}
+
+<section class="wishlist-page">
+
+    <div class="wishlist-header">
+
+        <h1>My Wishlist</h1>
+
+        <p>
+            Review your saved products and move them to your shopping cart whenever you're ready.
+        </p>
+
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+
+    <div class="flash-messages">
+
+        {% for category, message in messages %}
+
+        <div class="flash-message flash-{{ category }}">
+            {{ message }}
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+    {% endwith %}
+
+    {% if wishes %}
+
+    <div class="wishlist-grid">
+
+        {% for wish in wishes %}
+
+        <article class="wishlist-card">
+
+            <form
+                class="wishlist-remove-form"
+                action="{{ url_for('wishlist.remove', product_id=wish.product.id) }}"
+                method="POST"
+            >
+
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+
+                <button
+                    class="wishlist-remove-btn"
+                    type="submit"
+                    title="Remove from Wishlist"
+                >
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+            </form>
+
+            <div class="wishlist-image">
+
+                <img
+                    src="{% if wish.product.image and wish.product.image != 'placeholder.png' %}{{ url_for('static', filename='uploads/' + wish.product.image) }}{% else %}https://placeholder.com{% endif %}"
+                    alt="{{ wish.product.name }}"
+                >
+
+            </div>
+
+            <div class="wishlist-content">
+
+                <h3>
+
+                    <a href="/product/{{ wish.product.id }}">
+                        {{ wish.product.name }}
+                    </a>
+
+                </h3>
+
+                <div class="wishlist-meta">
+
+                    <span class="wishlist-price">
+
+                        ₦{{ "{:,.2f}".format(wish.product.price) }}
+
+                    </span>
+
+                    {% if wish.product.stock > 0 %}
+
+                    <span class="stock in-stock">
+
+                        {{ wish.product.stock }} In Stock
+
+                    </span>
+
+                    {% else %}
+
+                    <span class="stock out-stock">
+
+                        Out of Stock
+
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+                <form
+                    class="wishlist-cart-form"
+                    action="{{ url_for('wishlist.move_to_cart', product_id=wish.product.id) }}"
+                    method="POST"
+                >
+
+                    <input
+                        type="hidden"
+                        name="csrf_token"
+                        value="{{ csrf_token() }}"
+                    >
+
+                    {% if wish.product.stock > 0 %}
+
+                    <button
+                        type="submit"
+                        class="btn wishlist-btn"
+                    >
+
+                        <i class="fa-solid fa-cart-shopping"></i>
+
+                        Move to Cart
+
+                    </button>
+
+                    {% else %}
+
+                    <button
+                        type="button"
+                        class="btn btn-outline wishlist-btn"
+                        disabled
+                    >
+
+                        <i class="fa-solid fa-ban"></i>
+
+                        Out of Stock
+
+                    </button>
+
+                    {% endif %}
+
+                </form>
+
+            </div>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="wishlist-empty">
+
+        <div class="wishlist-empty-icon">
+
+            <i class="fa-regular fa-heart"></i>
+
+        </div>
+
+        <h2>Your Wishlist is Empty</h2>
+
+        <p>
+
+            Save products you love and they'll appear here for easy access whenever you return.
+
+        </p>
+
+        <a
+            href="/products"
+            class="btn"
+        >
+
+            <i class="fa-solid fa-store"></i>
+
+            Browse Products
+
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

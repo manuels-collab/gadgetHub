@@ -1,0 +1,143 @@
+{% extends "base.html" %} {% block title %}Admin Dashboard{% endblock %} {%
+block content %}
+
+<section class="dashboard-page">
+  <div class="dashboard-header">
+    <div>
+      <h1>Admin Dashboard</h1>
+
+      <p>Manage your store, products, customers and orders from one place.</p>
+    </div>
+
+    <div class="dashboard-actions">
+      <a href="/" class="btn btn-secondary">
+        <i class="fa-solid fa-store"></i>
+
+        View Store
+      </a>
+      <!-- 
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-primary">
+        
+                        <i class="fa-solid fa-right-from-bracket"></i>
+        
+                        Logout
+        
+                    </a>
+            -->
+    </div>
+  </div>
+
+  <section class="dashboard-stats">
+    <div class="stat-card">
+      <i class="fa-solid fa-users"></i>
+
+      <span>Users</span>
+
+      <h2>{{ total_users }}</h2>
+    </div>
+
+    <div class="stat-card">
+      <i class="fa-solid fa-dollar-sign"></i>
+
+      <span>Revenue</span>
+
+      <h2>₦{{ "{:,.2f}".format(gross_revenue) }}</h2>
+    </div>
+
+    <div class="stat-card">
+      <i class="fa-solid fa-cart-shopping"></i>
+
+      <span>Orders</span>
+
+      <h2>{{ orders_count }}</h2>
+    </div>
+
+    <div class="stat-card">
+      <i class="fa-solid fa-box-open"></i>
+
+      <span>Low Stock</span>
+
+      <h2>{{ low_stock_alerts }}</h2>
+    </div>
+  </section>
+
+  <div class="dashboard-grid">
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h2>
+          <i class="fa-solid fa-sliders"></i>
+
+          Store Management
+        </h2>
+      </div>
+
+      <div class="dashboard-links">
+        <a href="/admin/products">
+          <i class="fa-solid fa-box"></i>
+
+          Products
+        </a>
+
+        <a href="/admin/categories">
+          <i class="fa-solid fa-layer-group"></i>
+
+          Categories
+        </a>
+
+        <a href="/admin/brands">
+          <i class="fa-solid fa-building"></i>
+
+          Brands
+        </a>
+
+        <a href="/admin/orders">
+          <i class="fa-solid fa-receipt"></i>
+
+          Orders
+        </a>
+
+        <a href="/admin/coupons">
+          <i class="fa-solid fa-ticket"></i>
+
+          Coupons
+        </a>
+      </div>
+    </div>
+
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h2>
+          <i class="fa-solid fa-clock-rotate-left"></i>
+
+          Recent Activity
+        </h2>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Event</th>
+
+              <th>User</th>
+
+              <th>Time</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>Admin Session Started</td>
+
+              <td>@{{ current_user.username }}</td>
+
+              <td>Just Now</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,420 @@
+{% extends "base.html" %}
+
+{% block title %}Explore Catalog{% endblock %}
+
+{% block content %}
+
+<main class="catalog-page container">
+
+    <!-- ========================= -->
+    <!-- SEARCH -->
+    <!-- ========================= -->
+
+    <header class="catalog-header">
+
+        <form
+            action="{{ url_for('catalog.product_listing') }}"
+            method="GET"
+            class="catalog-search-form">
+
+            <div class="search-wrapper">
+
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ search_query or '' }}"
+                    placeholder="Search products..."
+                    class="catalog-search-input"
+                    required>
+
+                {% if current_category %}
+                <input
+                    type="hidden"
+                    name="category"
+                    value="{{ current_category }}">
+                {% endif %}
+
+                <button
+                    type="submit"
+                    class="search-btn">
+
+                    <i class="fas fa-search"></i>
+
+                </button>
+
+            </div>
+
+        </form>
+
+        <!-- Mobile Filter Button -->
+
+        <button
+            class="mobile-filter-btn"
+            id="mobileFilterButton">
+
+            <i class="fas fa-sliders-h"></i>
+
+            <span>Filters</span>
+
+        </button>
+
+    </header>
+
+    <!-- ========================= -->
+    <!-- PAGE LAYOUT -->
+    <!-- ========================= -->
+
+    <div class="catalog-layout">
+
+        <!-- ========================= -->
+        <!-- FILTERS -->
+        <!-- ========================= -->
+
+        <aside
+            class="catalog-sidebar"
+            id="catalogSidebar">
+
+            <!-- Categories -->
+
+            <div class="filter-group">
+
+                <h3 class="filter-title">
+
+                    <i class="fas fa-layer-group"></i>
+
+                    Categories
+
+                </h3>
+
+                <ul class="filter-list">
+
+                    <li>
+
+                        <a
+                            href="{{ url_for('catalog.product_listing') }}"
+                            class="{% if not current_category %}active-filter{% endif %}">
+
+                            All Categories
+
+                        </a>
+
+                    </li>
+
+                    {% for cat in categories %}
+
+                    <li>
+
+                        <a
+                            href="{{ url_for('catalog.product_listing', category_slug=cat.slug) }}"
+                            class="{% if current_category == cat.slug %}active-filter{% endif %}">
+
+                            {{ cat.name }}
+
+                        </a>
+
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+            <!-- Brands -->
+
+            <div class="filter-group">
+
+                <h3 class="filter-title">
+
+                    <i class="fas fa-tags"></i>
+
+                    Brands
+
+                </h3>
+
+                <ul class="filter-list">
+
+                    {% for brd in brands %}
+
+                    <li>
+
+                        <a
+                            href="{{ url_for(
+                                'catalog.product_listing',
+                                category_slug=current_category if current_category else None,
+                                brand=brd.id
+                            ) }}"
+                            class="{% if current_brand == brd.id %}active-filter{% endif %}">
+
+                            {{ brd.name }}
+
+                        </a>
+
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+        </aside>
+
+        <!-- ========================= -->
+        <!-- PRODUCTS -->
+        <!-- ========================= -->
+
+        <section class="catalog-content">
+
+            <div class="catalog-topbar">
+
+                <h2>
+
+                    {{ products|length }} Products
+
+                </h2>
+
+                {% if search_query or current_category or current_brand %}
+
+                <a
+                    href="{{ url_for('catalog.product_listing') }}"
+                    class="clear-filters">
+
+                    <i class="fas fa-filter-circle-xmark"></i>
+
+                    Clear Filters
+
+                </a>
+
+                {% endif %}
+
+            </div>
+
+            <div class="products-grid">
+
+                {% if products %}
+
+                    {% for product in products %}
+
+                                <article class="product-card">
+
+                        <a
+                            href="{{ url_for('catalog.product_details', product_id=product.id) }}"
+                            class="product-image-link">
+
+                            <img
+                                src="{% if product.image and product.image != 'placeholder.png' %}{{ url_for('static', filename='uploads/' + product.image) }}{% else %}https://placeholder.com{% endif %}"
+                                alt="{{ product.name }}"
+                                class="product-image">
+
+                        </a>
+
+                        <div class="product-body">
+
+                            <h3 class="product-title">
+
+                                <a href="{{ url_for('catalog.product_details', product_id=product.id) }}">
+
+                                    {{ product.name }}
+
+                                </a>
+
+                            </h3>
+
+                            <div class="product-rating">
+
+                                <i class="fas fa-star"></i>
+
+                                <span>
+
+                                    {{ product.average_rating }}/5
+
+                                </span>
+
+                            </div>
+
+                            <div class="product-brand">
+                                <img
+                                    src="{% if product.brand.logo %}{{ url_for('static', filename='uploads/' + product.brand.logo) }}{% else %}https://via.placeholder.com/70?text=Brand{% endif %}"
+                                    alt="{{ product.brand.name }} logo"
+                                    class="brand-logo"
+                                />
+                                <span class="brand-name">{{ product.brand.name }}</span>
+                            </div>
+
+                            <div class="product-meta">
+
+                                <span class="product-price">
+
+                                    ₦{{ "{:,.2f}".format(product.price) }}
+
+                                </span>
+
+                                {% if product.stock > 0 %}
+
+                                <span class="product-stock in-stock">
+
+                                    <i class="fas fa-check-circle"></i>
+
+                                    In Stock
+
+                                </span>
+
+                                {% else %}
+
+                                <span class="product-stock out-stock">
+
+                                    <i class="fas fa-times-circle"></i>
+
+                                    Out of Stock
+
+                                </span>
+
+                                {% endif %}
+
+                            </div>
+
+                            <div class="product-actions">
+
+                                <form
+                                    action="{{ url_for('cart.add_to_cart', product_id=product.id) }}"
+                                    method="POST">
+
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="{{ csrf_token() }}">
+
+                                    {% if product.stock > 0 %}
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary btn-full">
+
+                                        <i class="fas fa-shopping-cart"></i>
+
+                                        <span>Add to Cart</span>
+
+                                    </button>
+
+                                    {% else %}
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-secondary btn-full"
+                                        disabled>
+
+                                        <i class="fas fa-ban"></i>
+
+                                        <span>Out of Stock</span>
+
+                                    </button>
+
+                                    {% endif %}
+
+                                </form>
+
+                                <form
+                                    action="{{ url_for('wishlist.add', product_id=product.id) }}"
+                                    method="POST">
+
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="{{ csrf_token() }}">
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-outline btn-full wishlist-btn">
+
+                                        <i class="far fa-heart"></i>
+
+                                        <span>Wishlist</span>
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                    {% endfor %}
+
+                {% else %}
+
+                <div class="catalog-empty">
+
+                    <i class="fas fa-box-open empty-icon"></i>
+
+                    <h3>
+
+                        No Products Found
+
+                    </h3>
+
+                    <p>
+
+                        We couldn't find any products matching your search.
+
+                    </p>
+
+                    <a
+                        href="{{ url_for('catalog.product_listing') }}"
+                        class="btn btn-primary">
+
+                        Browse All Products
+
+                    </a>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+                    </div>
+
+            </section>
+
+        </div>
+
+</main>
+
+<!-- ========================================= -->
+<!-- Mobile Filter Toggle -->
+<!-- ========================================= -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const filterButton = document.getElementById("mobileFilterButton");
+    const sidebar = document.getElementById("catalogSidebar");
+
+    if (filterButton && sidebar) {
+
+        filterButton.addEventListener("click", function () {
+            sidebar.classList.toggle("show-sidebar");
+        });
+
+        document.addEventListener("click", function (e) {
+
+            if (
+                window.innerWidth <= 992 &&
+                !sidebar.contains(e.target) &&
+                !filterButton.contains(e.target)
+            ) {
+                sidebar.classList.remove("show-sidebar");
+            }
+
+        });
+
+    }
+
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Manage Categories{% endblock %}
+
+{% block content %}
+
+<section class="admin-page">
+
+    <div class="admin-header">
+
+        <div>
+
+            <h1>Category Management</h1>
+
+            <p>
+                Organize your store by creating and managing product categories.
+            </p>
+
+        </div>
+
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">
+
+            <i class="fa-solid fa-arrow-left"></i>
+
+            Back to Dashboard
+
+        </a>
+
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+
+    <div class="flash-messages">
+
+        {% for category, message in messages %}
+
+        <div class="flash-message flash-{{ category }}">
+            {{ message }}
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+    {% endwith %}
+
+    <div class="admin-grid">
+
+        <div class="admin-card">
+
+            <div class="card-header">
+
+                <h2>
+
+                    <i class="fa-solid fa-folder-plus"></i>
+
+                    Add Category
+
+                </h2>
+
+            </div>
+
+            <form
+                class="admin-form"
+                method="POST"
+                action="{{ url_for('admin.manage_categories') }}"
+                novalidate
+            >
+
+                {{ form.csrf_token }}
+
+                <div class="form-group {% if form.name.errors %}has-error{% endif %}">
+
+                    {{ form.name.label(class="form-label") }}
+
+                    <div class="input-group">
+
+                        <i class="fa-solid fa-layer-group"></i>
+
+                        {{ form.name(class="form-input", placeholder="Electronics") }}
+
+                    </div>
+
+                    {% for error in form.name.errors %}
+                    <span class="form-error">{{ error }}</span>
+                    {% endfor %}
+
+                </div>
+
+                <div class="form-group {% if form.slug.errors %}has-error{% endif %}">
+
+                    {{ form.slug.label(class="form-label") }}
+
+                    <div class="input-group">
+
+                        <i class="fa-solid fa-link"></i>
+
+                        {{ form.slug(class="form-input", placeholder="electronics") }}
+
+                    </div>
+
+                    {% for error in form.slug.errors %}
+                    <span class="form-error">{{ error }}</span>
+                    {% endfor %}
+
+                </div>
+
+                <div class="form-group {% if form.description.errors %}has-error{% endif %}">
+
+                    {{ form.description.label(class="form-label") }}
+
+                    {{ form.description(
+                        class="form-textarea",
+                        rows="4",
+                        placeholder="Category description..."
+                    ) }}
+
+                    {% for error in form.description.errors %}
+                    <span class="form-error">{{ error }}</span>
+                    {% endfor %}
+
+                </div>
+
+                {{ form.submit(class="btn btn-primary admin-btn") }}
+
+            </form>
+
+        </div>
+
+        <div class="admin-card">
+
+            <div class="card-header">
+
+                <h2>
+
+                    <i class="fa-solid fa-list"></i>
+
+                    Categories
+
+                </h2>
+
+            </div>
+
+            <div class="table-wrapper">
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Slug</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% if categories %}
+
+                        {% for category in categories %}
+
+                        <tr>
+
+                            <td>
+
+                                <code>ID-{{ category.id }}</code>
+
+                            </td>
+
+                            <td>
+
+                                <strong>{{ category.name }}</strong>
+
+                            </td>
+
+                            <td>
+
+                                <code>/category/{{ category.slug }}</code>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                        {% else %}
+
+                        <tr>
+
+                            <td colspan="3" class="empty-table">
+
+                                No categories have been created yet.
+
+                            </td>
+
+                        </tr>
+
+                        {% endif %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

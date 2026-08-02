@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Manage Brands{% endblock %}
+
+{% block content %}
+
+<section class="admin-page">
+
+    <div class="admin-header">
+
+        <div>
+
+            <h1>Brand Management</h1>
+
+            <p>
+                Create and manage the brands available in your store.
+            </p>
+
+        </div>
+
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">
+
+            <i class="fa-solid fa-arrow-left"></i>
+
+            Back to Dashboard
+
+        </a>
+
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+
+    <div class="flash-messages">
+
+        {% for category, message in messages %}
+
+        <div class="flash-message flash-{{ category }}">
+            {{ message }}
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+    {% endwith %}
+
+    <div class="admin-grid">
+
+        <div class="admin-card">
+
+            <div class="card-header">
+
+                <h2>
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    Add Brand
+
+                </h2>
+
+            </div>
+
+            <form
+                class="admin-form"
+                method="POST"
+                action="{{ url_for('admin.manage_brands') }}"
+                enctype="multipart/form-data"
+                novalidate
+            >
+
+                {{ form.csrf_token }}
+
+                <div class="form-group {% if form.name.errors %}has-error{% endif %}">
+
+                    {{ form.name.label(class="form-label") }}
+
+                    <div class="input-group">
+
+                        <i class="fa-solid fa-tag"></i>
+
+                        {{ form.name(class="form-input", placeholder="Brand Name") }}
+
+                    </div>
+
+                    {% for error in form.name.errors %}
+                    <span class="form-error">{{ error }}</span>
+                    {% endfor %}
+
+                </div>
+
+                <div class="form-group {% if form.country.errors %}has-error{% endif %}">
+
+                    {{ form.country.label(class="form-label") }}
+
+                    <div class="input-group">
+
+                        <i class="fa-solid fa-earth-africa"></i>
+
+                        {{ form.country(class="form-input", placeholder="Country of Origin") }}
+
+                    </div>
+
+                    {% for error in form.country.errors %}
+                    <span class="form-error">{{ error }}</span>
+                    {% endfor %}
+
+                </div>
+
+                <div class="form-group {% if form.logo.errors %}has-error{% endif %}">
+
+                    {{ form.logo.label(class="form-label") }}
+
+                    {{ form.logo(class="file-input") }}
+
+                    {% for error in form.logo.errors %}
+                    <span class="form-error">{{ error }}</span>
+                    {% endfor %}
+
+                </div>
+
+                {{ form.submit(class="btn btn-primary admin-btn") }}
+
+            </form>
+
+        </div>
+
+        <div class="admin-card">
+
+            <div class="card-header">
+
+                <h2>
+
+                    <i class="fa-solid fa-building"></i>
+
+                    Registered Brands
+
+                </h2>
+
+            </div>
+
+            <div class="table-wrapper">
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Logo</th>
+                            <th>Brand</th>
+                            <th>Country</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% if brands %}
+
+                        {% for brand in brands %}
+
+                        <tr>
+
+                            <td>
+
+                                <img
+                                    class="brand-logo"
+                                    src="{{ url_for('static', filename='uploads/' + brand.logo) }}"
+                                    alt="{{ brand.name }}"
+                                    onerror="this.src='https://placeholder.com';"
+                                >
+
+                            </td>
+
+                            <td>
+
+                                <strong>{{ brand.name }}</strong>
+
+                            </td>
+
+                            <td>
+
+                                <span class="country">
+
+                                    <i class="fa-solid fa-location-dot"></i>
+
+                                    {{ brand.country }}
+
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                        {% else %}
+
+                        <tr>
+
+                            <td colspan="3" class="empty-table">
+
+                                No brands have been added yet.
+
+                            </td>
+
+                        </tr>
+
+                        {% endif %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

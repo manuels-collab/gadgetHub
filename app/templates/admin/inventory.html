@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Inventory{% endblock %}
+
+{% block content %}
+
+<section class="inventory-page">
+
+    <div class="inventory-header">
+
+        <div>
+
+            <h1>Inventory Management</h1>
+
+            <p>
+                Track stock, update products and manage your catalog.
+            </p>
+
+        </div>
+
+        <a href="{{ url_for('admin.add_product') }}" class="btn btn-primary">
+
+            <i class="fa-solid fa-plus"></i>
+
+            Add Product
+
+        </a>
+
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+
+    <div class="flash-messages">
+
+        {% for category, message in messages %}
+
+        <div class="flash-message flash-{{ category }}">
+
+            {{ message }}
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+    {% endwith %}
+
+    <div class="inventory-card">
+
+        <div class="table-wrapper">
+
+            <table class="inventory-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>SKU</th>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% if products %}
+
+                    {% for product in products %}
+
+                    <tr>
+
+                        <td>
+
+                            <code>{{ product.sku }}</code>
+
+                        </td>
+
+                        <td>
+
+                            <strong>{{ product.name }}</strong>
+
+                        </td>
+
+                        <td>
+
+                            ₦{{ "{:,.2f}".format(product.price) }}
+
+                        </td>
+
+                        <td>
+
+                            {% if product.stock > 5 %}
+
+                            <span class="stock-badge in-stock">
+
+                                <i class="fa-solid fa-circle-check"></i>
+
+                                {{ product.stock }} Units
+
+                            </span>
+
+                            {% else %}
+
+                            <span class="stock-badge low-stock">
+
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+
+                                {{ product.stock }} Units
+
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <div class="inventory-actions">
+
+                                <a href="{{ url_for('admin.manage_product_images', product_id=product.id) }}" class="btn btn-secondary btn-small">
+
+                                    <i class="fa-solid fa-images"></i>
+
+                                    Gallery
+
+                                </a>
+
+                                <a href="{{ url_for('admin.edit_product', id=product.id) }}" class="btn btn-primary btn-small">
+
+                                    <i class="fa-solid fa-pen"></i>
+
+                                    Edit
+
+                                </a>
+
+                                <form
+                                    action="{{ url_for('admin.delete_product', id=product.id) }}"
+                                    method="POST"
+                                    onsubmit="return confirm('Are you sure?');"
+                                >
+
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="{{ csrf_token() }}"
+                                    >
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-danger btn-small"
+                                    >
+
+                                        <i class="fa-solid fa-trash"></i>
+
+                                        Delete
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                    {% else %}
+
+                    <tr>
+
+                        <td colspan="5" class="empty-table">
+
+                            No products available.
+
+                        </td>
+
+                    </tr>
+
+                    {% endif %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

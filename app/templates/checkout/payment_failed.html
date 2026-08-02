@@ -1,0 +1,27 @@
+{% extends "base.html" %} {% block title %}Payment Failed{% endblock %} {% block
+content %}
+<main class="checkout-failure-page container">
+  <section class="failure-card">
+    <div class="failure-icon">
+      <i class="fa-solid fa-circle-xmark"></i>
+    </div>
+
+    <h1 class="failure-title">Payment Failed</h1>
+    <p class="failure-message">
+      Your payment could not be completed. Please check your card details and
+      try again.
+    </p>
+
+    <div class="failure-actions">
+      <a
+        href="{{ url_for('checkout.paystack_checkout') }}"
+        class="btn btn-primary"
+        >Try Again</a
+      >
+      <a href="{{ url_for('cart.view_cart') }}" class="btn btn-secondary"
+        >Return to Cart</a
+      >
+    </div>
+  </section>
+</main>
+{% endblock %}
