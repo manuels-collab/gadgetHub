@@ -31,7 +31,7 @@ def add_to_cart(product_id):
 @cart_bp.route('/update/<int:product_id>', methods=['POST'])
 @login_required
 def update_quantity(product_id):
-    """Synchronizes field tracking adjustments natively with your MySQL row items."""
+    """Synchronizes field tracking adjustments natively with your PostgreSQL row items."""
     quantity = request.form.get('quantity', type=int)
     
     if quantity is not None:

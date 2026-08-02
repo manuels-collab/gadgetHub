@@ -134,7 +134,7 @@ class AdminService:
 
     @staticmethod
     def create_coupon(form_data) -> Coupon:
-        """Creates and commits a brand new promotional discount campaign code to MySQL."""
+        """Creates and commits a brand new promotional discount campaign code to PostgreSQL."""
         # Note: Depending on your choice, if you build a form object for Coupon later,
         # this maps form fields directly into column variables.
         new_coupon = Coupon(

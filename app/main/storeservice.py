@@ -6,7 +6,7 @@ from ..models.models import Category, Product
 class StoreService:
     @staticmethod
     def get_all_categories() -> list:
-        """Retrieves all available e-commerce product categories from MySQL.
+        """Retrieves all available e-commerce product categories from PostgreSQL.
         
         Used to dynamically render the navigation bar menus and category section grids.
         """
@@ -30,7 +30,7 @@ class StoreService:
     def get_product_of_the_week() -> Product | None:
         """Selects a highly-rated featured product dynamically to act as the Product of the Week spotlight node.
         
-        Applies a random sorting algorithm compatible across both SQLite and MySQL backends.
+        Applies a random sorting algorithm compatible across both SQLite and PostgreSQL backends.
         """
         # Determine the active database engine to apply the correct random SQL function
         random_func = func.random() if db.engine.name == 'sqlite' else func.rand()

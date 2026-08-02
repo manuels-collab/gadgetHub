@@ -15,7 +15,7 @@ class ReviewService:
         if already_reviewed:
             return False
 
-        # 2. Write the new review trace row to MySQL
+        # 2. Write the new review trace row to PostgreSQL
         new_review = Reviews(
             user_id=user_id,
             product_id=product_id,

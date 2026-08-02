@@ -4,7 +4,7 @@ from sqlalchemy.engine import URL
 import os
 
 connection_string = URL.create(
-    drivername="mysql+pymysql",
+    drivername="postgresql+psycopg",
     username=os.getenv("DB_USERNAME"),
     password=os.getenv("DB_PASSWORD"),
     host=os.getenv('DB_HOST'),

@@ -5,7 +5,7 @@ from ..main.cart_service import CartService
 class WishlistService:
     @staticmethod
     def get_user_wishlist(user_id: int) -> list:
-        """Retrieves all active wishlist records for a user from MySQL."""
+        """Retrieves all active wishlist records for a user from PostgreSQL."""
         return db.session.execute(
             db.select(Wishlist).filter_by(user_id=user_id).order_by(Wishlist.created_at.desc())
         ).scalars().all()
