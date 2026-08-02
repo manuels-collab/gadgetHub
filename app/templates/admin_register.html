@@ -1,0 +1,47 @@
+{% extends "base.html" %} {% block title %}Hidden Admin Register{% endblock %}
+{% block head %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/admin_auth.css') }}"
+/>
+{% endblock %} {% block content %}
+<main class="admin-auth container">
+  <section class="auth-card">
+    <h1>Register Administrator</h1>
+    <form method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      <div class="form-group">
+        <label>Username</label>
+        {{ form.username(class_='form-input') }}
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        {{ form.email(class_='form-input') }}
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        {{ form.password(class_='form-input') }}
+      </div>
+      <div class="form-group">
+        <label>First name</label>
+        {{ form.first_name(class_='form-input') }}
+      </div>
+      <div class="form-group">
+        <label>Last name</label>
+        {{ form.last_name(class_='form-input') }}
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        {{ form.phone(class_='form-input') }}
+      </div>
+      <div class="form-group">
+        <label>Profile image</label>
+        {{ form.profile_image() }}
+      </div>
+      <div class="form-actions">
+        {{ form.submit(class_='btn btn-primary') }}
+      </div>
+    </form>
+  </section>
+</main>
+{% endblock %}

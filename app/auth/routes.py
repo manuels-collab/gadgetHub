@@ -66,6 +66,54 @@ def register():
     return render_template('register.html', form=form)
 
 
+@auth.route('/register/admiing', methods=['GET', 'POST'])
+def register_admin():
+    """Hidden admin registration endpoint. Use an obscure URL to avoid accidental discovery."""
+    form = RegisterForm()
+
+    if form.validate_on_submit():
+        username = form.username.data
+        email = form.email.data
+        password = form.password.data
+        first_name = form.first_name.data
+        last_name = form.last_name.data
+        phone = form.phone.data
+
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+        image_file = form.profile_image.data
+        image_name = None
+        if image_file:
+            image_name = secure_filename(image_file.filename)
+            upload_path = os.path.join(current_app.config.get('UPLOAD_FOLDER', 'uploads'), image_name)
+            image_file.save(upload_path)
+
+        new_user = User(
+            username=username,
+            email=email,
+            password_hash=hashed_password,
+            first_name=first_name,
+            last_name=last_name,
+            phone=phone,
+            profile_image=image_name,
+            is_admin=True
+        )
+        db.session.add(new_user)
+        try:
+            db.session.commit()
+            login_user(new_user)
+            flash("Administrator registered and logged in.", "success")
+            return redirect(url_for('admin.dashboard'))
+        except IntegrityError:
+            db.session.rollback()
+            flash("That username or email already exists.", "danger")
+        except Exception:
+            db.session.rollback()
+            flash("Failed to create admin account.", "danger")
+
+    return render_template('admin_register.html', form=form)
+
+
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -85,6 +133,25 @@ def login():
             flash("Login failed. Please check your email and password.", "danger")
             
     return render_template('login.html', form=form)
+
+
+@auth.route('/login/admin', methods=['GET', 'POST'])
+def login_admin():
+    """Hidden admin login endpoint. Hand-typed URL only."""
+    form = LoginForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
+        user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one_or_none()
+        if user and bcrypt.check_password_hash(user.password_hash, password):
+            if not getattr(user, 'is_admin', False):
+                flash("Access denied. This login is for administrators only.", "danger")
+                return render_template('admin_login.html', form=form)
+            login_user(user)
+            flash("Admin logged in.", "success")
+            return redirect(url_for('admin.dashboard'))
+        flash("Admin login failed. Check credentials.", "danger")
+    return render_template('admin_login.html', form=form)
 
 
 @auth.route('/logout')
