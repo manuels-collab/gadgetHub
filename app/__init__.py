@@ -41,7 +41,7 @@ def create_app():
 
     app.config.from_object("config.Config")
     app.config["SQLALCHEMY_ECHO"] = False
-    app.config["SQLALCHEMY_DATABASE_URI"] = connection_string
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
     
 
     db.init_app(app)
