@@ -15,7 +15,7 @@ connection_string = URL.create(
 
 from flask_login import current_user
 
-
+from .models.models import User
 
 def create_app():
     app = Flask(__name__)
