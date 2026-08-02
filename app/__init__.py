@@ -8,7 +8,7 @@ connection_string = URL.create(
     username=os.getenv("DB_USERNAME"),
     password=os.getenv("DB_PASSWORD"),
     host=os.getenv('DB_HOST'),
-    port=int(os.getenv("DB_PORT")),
+    port=int(os.getenv("DB_PORT")) if os.getenv("DB_PORT") else None,
     database=os.getenv("DB_NAME")
 )
 
@@ -22,6 +22,7 @@ def create_app():
 
     app.config.from_object("config.Config")
     app.config["SQLALCHEMY_ECHO"] = False
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL") or str(connection_string)
 
     print("=" * 60)
     print("DATABASE_URL env:", os.getenv("DATABASE_URL"))

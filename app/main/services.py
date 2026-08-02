@@ -27,7 +27,7 @@ class StoreService:
 
     @staticmethod
     def get_product_of_the_week():
-        random_func = func.random() if db.engine.name == 'sqlite' else func.rand()
+        random_func = func.random() if db.engine.name == 'sqlite' else func.random()
         return db.session.execute(
             db.select(Product)
             .filter_by(is_featured=True)

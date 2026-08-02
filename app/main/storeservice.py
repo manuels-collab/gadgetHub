@@ -33,7 +33,7 @@ class StoreService:
         Applies a random sorting algorithm compatible across both SQLite and PostgreSQL backends.
         """
         # Determine the active database engine to apply the correct random SQL function
-        random_func = func.random() if db.engine.name == 'sqlite' else func.rand()
+        random_func = func.random() if db.engine.name == 'sqlite' else func.random()
         
         return db.session.execute(
             db.select(Product)
