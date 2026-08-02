@@ -12,25 +12,7 @@ connection_string = URL.create(
     database=os.getenv("DB_NAME")
 )
 
-from .models.models import (
-    User,
-    Category,
-    Brand,
-    Product,
-    ProductImage,
-    Cart,
-    CartItem,
-    Wishlist,
-    ShippingAddress,
-    Order,
-    OrderItem,
-    Transaction,
-    Reviews,
-    Coupon,
-    NewsletterSubscription,
-)
 
-from .main.cart_service import CartService
 from flask_login import current_user
 
 
@@ -38,11 +20,13 @@ from flask_login import current_user
 def create_app():
     app = Flask(__name__)
 
-
     app.config.from_object("config.Config")
     app.config["SQLALCHEMY_ECHO"] = False
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
-    
+
+    print("=" * 60)
+    print("DATABASE_URL env:", os.getenv("DATABASE_URL"))
+    print("SQLALCHEMY_DATABASE_URI:", app.config.get("SQLALCHEMY_DATABASE_URI"))
+    print("=" * 60)
 
     db.init_app(app)
     bcrypt.init_app(app)
