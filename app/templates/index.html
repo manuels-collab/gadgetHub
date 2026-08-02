@@ -2,6 +2,22 @@
 %} {% block content %}
 
 <section class="hero">
+  <video
+    class="hero-video"
+    autoplay
+    muted
+    loop
+    playsinline
+    poster="{{ url_for('static', filename='uploads/7989488-hd_1920_1080_25fps.mp4') }}"
+  >
+    <source
+      src="{{ url_for('static', filename='uploads/7989488-hd_1920_1080_25fps.mp4') }}"
+      type="video/mp4"
+    />
+  </video>
+
+  <div class="hero-overlay"></div>
+
   <div class="hero-content">
     <span class="hero-badge"> Premium Shopping Experience </span>
 
