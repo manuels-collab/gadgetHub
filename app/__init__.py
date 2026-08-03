@@ -57,7 +57,9 @@ def create_app():
     with app.app_context():
         db.create_all()
 
-    @app.route("/")
+    # Root route is served by the main blueprint `index` view.
+    # Keep this helper route separate so it does not override `/`.
+    @app.route("/_test")
     def test():
         return redirect(url_for("auth.dashboard"))
 

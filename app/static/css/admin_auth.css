@@ -37,7 +37,26 @@
 .form-group { margin-bottom: 12px; }
 .form-group label { display:block; margin-bottom:6px; font-weight:600; font-size:0.95rem; }
 .form-input { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.95rem; box-sizing: border-box; }
-.form-input[type='file'] { padding: 6px; }
+.form-input[type='file'] {
+  padding: 10px 12px;
+  background: #f7f9ff;
+}
+.form-input[type='file']::-webkit-file-upload-button {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+.form-input[type='file']::-moz-file-upload-button {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
 .form-actions { text-align: right; margin-top: 12px; }
 
 .btn { padding: 10px 14px; border-radius: 6px; border: none; cursor: pointer; font-weight:600; }
