@@ -9,7 +9,6 @@ __pycache__/
 instance/
 *.log
 .DS_Store
-
 coverage/
 htmlcov/
 .env.*
