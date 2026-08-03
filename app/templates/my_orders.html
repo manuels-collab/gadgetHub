@@ -7,9 +7,7 @@
             <h1>My Orders</h1>
             <p style="color: #666;">Track your purchase logs and order fulfillment states.</p>
         </div>
-        <a href="{{ url_for('cart.view_cart') }}" class="btn btn-secondary">
-            <i class="fa-solid fa-cart-shopping"></i> <span  class="btn btn-primary">Back to Cart</span>
-        </a>
+       
     </header>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -70,6 +68,9 @@
                 {% endif %}
             </tbody>
         </table>
+         <a href="{{ url_for('cart.view_cart') }}" class="btn btn-primary btn-full-width cart-checkout-btn">
+            <i class="fa-solid fa-cart-shopping"></i> <span  class="btn btn-primary">Back to Cart</span>
+        </a>
     </div>
 </main>
 {% endblock %}
