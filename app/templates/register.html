@@ -44,7 +44,8 @@ block content %}
           <div class="input-group">
             <i class="fa-solid fa-user"></i>
 
-            {{ form.username(class="form-input", placeholder="Choose a username") }}
+            {{ form.username(class="form-input", placeholder="Choose a
+            username") }}
           </div>
 
           {% if form.username.errors %}
@@ -82,7 +83,8 @@ block content %}
           <div class="input-group">
             <i class="fa-solid fa-lock"></i>
 
-            {{ form.password(class="form-input", placeholder="Enter a secure password") }}
+            {{ form.password(class="form-input", placeholder="Enter a secure
+            password") }}
           </div>
 
           {% if form.password.errors %}
@@ -140,13 +142,33 @@ block content %}
           </div>
         </div>
 
+        <div
+          class="form-group {% if form.country_code.errors %}has-error{% endif %}"
+        >
+          {{ form.country_code.label(class="form-label") }}
+
+          <div class="input-group">
+            <i class="fa-solid fa-globe"></i>
+
+            {{ form.country_code(class="form-input") }}
+          </div>
+
+          {% if form.country_code.errors %}
+          <div class="form-errors">
+            {% for error in form.country_code.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+
         <div class="form-group {% if form.phone.errors %}has-error{% endif %}">
           {{ form.phone.label(class="form-label") }}
 
           <div class="input-group">
             <i class="fa-solid fa-phone"></i>
 
-            {{ form.phone(class="form-input", placeholder="+1234567890") }}
+            {{ form.phone(class="form-input", placeholder="712345678") }}
           </div>
 
           {% if form.phone.errors %}

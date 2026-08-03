@@ -52,9 +52,29 @@
         <label>Last name</label>
         {{ form.last_name(class_='form-input') }}
       </div>
-      <div class="form-group">
+      <div
+        class="form-group {% if form.country_code.errors %}has-error{% endif %}"
+      >
+        <label>Country Code</label>
+        {{ form.country_code(class_='form-input') }} {% if
+        form.country_code.errors %}
+        <div class="form-errors">
+          {% for error in form.country_code.errors %}
+          <span>{{ error }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      <div class="form-group {% if form.phone.errors %}has-error{% endif %}">
         <label>Phone</label>
-        {{ form.phone(class_='form-input') }}
+        {{ form.phone(class_='form-input', placeholder='712345678') }} {% if
+        form.phone.errors %}
+        <div class="form-errors">
+          {% for error in form.phone.errors %}
+          <span>{{ error }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
       </div>
       <div class="form-group">
         <label>Profile image</label>

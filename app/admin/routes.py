@@ -117,6 +117,11 @@ def view_orders():
     orders = db.session.execute(db.select(Order).order_by(Order.created_at.desc())).scalars().all()
     return render_template("admin/orders.html", orders=orders)
 
+@admin_bp.route('/orders/<int:id>')
+def view_order(id):
+    order = db.session.get(Order, id) or abort(404)
+    return render_template("admin/order_details.html", order=order)
+
 @admin_bp.route('/users')
 def view_users():
     users = db.session.execute(db.select(User).order_by(User.date_joined.desc())).scalars().all()

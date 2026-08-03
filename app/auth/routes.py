@@ -24,7 +24,7 @@ async def register():
         password = form.password.data
         first_name = form.first_name.data
         last_name = form.last_name.data
-        phone = form.phone.data
+        phone = form.get_phone_number()
 
         hashed_password = await run_blocking(lambda: bcrypt.generate_password_hash(password).decode('utf-8'))
 
@@ -77,7 +77,7 @@ async def register_admin():
         password = form.password.data
         first_name = form.first_name.data
         last_name = form.last_name.data
-        phone = form.phone.data
+        phone = form.get_phone_number()
 
         hashed_password = await run_blocking(lambda: bcrypt.generate_password_hash(password).decode('utf-8'))
 

@@ -1,0 +1,36 @@
+{% extends "base.html" %} {% block title %}Admin - Order Details{% endblock %}
+{% block content %}
+<main class="admin-viewport-wrapper" id="order-detail-dashboard">
+  <header class="admin-view-header">
+    <div class="admin-header-title-block">
+      <h1 class="admin-view-title">Order #{{ order.order_number }}</h1>
+      <p class="admin-view-subtitle">
+        Review the full purchase summary and fulfillment state.
+      </p>
+    </div>
+    <a href="{{ url_for('admin.view_orders') }}" class="btn btn-secondary"
+      >Back to Orders</a
+    >
+  </header>
+
+  <section class="admin-table-section">
+    <div class="dashboard-card">
+      <h2>Order Summary</h2>
+      <p>
+        <strong>Customer:</strong> {{ order.user.first_name }} {{
+        order.user.last_name }} (@{{ order.user.username }})
+      </p>
+      <p><strong>Email:</strong> {{ order.user.email }}</p>
+      <p>
+        <strong>Status:</strong> {{ order.status.value if hasattr(order.status,
+        'value') else order.status }}
+      </p>
+      <p><strong>Total:</strong> ₦{{ "{:,.2f}".format(order.total) }}</p>
+      <p>
+        <strong>Placed:</strong> {{ order.created_at.strftime('%Y-%m-%d %H:%M')
+        }}
+      </p>
+    </div>
+  </section>
+</main>
+{% endblock %}
