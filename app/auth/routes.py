@@ -53,10 +53,12 @@ async def register():
         except IntegrityError as exc:
             await run_blocking(lambda: db.session.rollback())
             error_text = str(exc).lower()
-            if 'unique constraint' in error_text or 'duplicate key' in error_text or 'unique violation' in error_text:
+            if 'username' in error_text:
+                form.username.errors.append("This username is already taken.")
+            if 'email' in error_text:
+                form.email.errors.append("This email is already in use.")
+            if not form.username.errors and not form.email.errors:
                 flash("That username or email is already taken. Please choose another.", "danger")
-            else:
-                flash("Registration failed due to a database error. Please try again.", "danger")
         except Exception:
             await run_blocking(lambda: db.session.rollback())
             flash("Registration failed. Please try again or contact support.", "danger")
@@ -102,9 +104,15 @@ async def register_admin():
             login_user(new_user)
             flash("Administrator registered and logged in.", "success")
             return redirect(url_for('admin.dashboard'))
-        except IntegrityError:
+        except IntegrityError as exc:
             await run_blocking(lambda: db.session.rollback())
-            flash("That username or email already exists.", "danger")
+            error_text = str(exc).lower()
+            if 'username' in error_text:
+                form.username.errors.append("This username is already taken.")
+            if 'email' in error_text:
+                form.email.errors.append("This email is already in use.")
+            if not form.username.errors and not form.email.errors:
+                flash("That username or email already exists.", "danger")
         except Exception:
             await run_blocking(lambda: db.session.rollback())
             flash("Failed to create admin account.", "danger")
@@ -122,12 +130,14 @@ async def login():
 
         user = await run_blocking(lambda: db.session.execute(db.select(User).filter_by(email=email)).scalar_one_or_none())
 
-        if user and await run_blocking(lambda: bcrypt.check_password_hash(user.password_hash, password)):
+        if not user:
+            flash("No account found with that email. Please register or check your email.", "danger")
+        elif not await run_blocking(lambda: bcrypt.check_password_hash(user.password_hash, password)):
+            flash("Incorrect password. Please try again.", "danger")
+        else:
             login_user(user)
             flash("Logged in successfully!", "success")
             return redirect(url_for('auth.dashboard'))
-        else:
-            flash("Login failed. Please check your email and password.", "danger")
             
     return render_template('login.html', form=form)
 
@@ -140,14 +150,16 @@ async def login_admin():
         email = form.email.data
         password = form.password.data
         user = await run_blocking(lambda: db.session.execute(db.select(User).filter_by(email=email)).scalar_one_or_none())
-        if user and await run_blocking(lambda: bcrypt.check_password_hash(user.password_hash, password)):
-            if not getattr(user, 'is_admin', False):
-                flash("Access denied. This login is for administrators only.", "danger")
-                return render_template('admin_login.html', form=form)
+        if not user:
+            flash("No administrator account found with that email.", "danger")
+        elif not await run_blocking(lambda: bcrypt.check_password_hash(user.password_hash, password)):
+            flash("Incorrect admin password. Please try again.", "danger")
+        elif not getattr(user, 'is_admin', False):
+            flash("Access denied. This login is for administrators only.", "danger")
+        else:
             login_user(user)
             flash("Admin logged in.", "success")
             return redirect(url_for('admin.dashboard'))
-        flash("Admin login failed. Check credentials.", "danger")
     return render_template('admin_login.html', form=form)
 
 
