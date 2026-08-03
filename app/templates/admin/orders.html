@@ -68,7 +68,7 @@
 
                         <td class="data-status">
                             <span class="status-indicator-badge status-{{ order.status|lower }}">
-                                {{ order.status.value if hasattr(order.status, 'value') else order.status }}
+                                {{ order.status.value if order.status.value is defined else order.status }}
                             </span>
                         </td>
 
