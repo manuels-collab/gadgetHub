@@ -9,7 +9,7 @@ __pycache__/
 instance/
 *.log
 .DS_Store
-app/static/uploads/
+app/static/uploads/*
 coverage/
 htmlcov/
 .env.*
