@@ -2,9 +2,10 @@ from flask import Blueprint, render_template, redirect, url_for, flash, abort, r
 from flask_login import login_required, current_user
 from sqlalchemy.exc import IntegrityError
 from ..extensions import db
-from ..models.models import Product, Category, Brand, Order, User, ProductImage, Coupon
+from ..models.models import Product, Category, Brand, Order, User, ProductImage, Coupon, OrderStatus
 from .forms import ProductForm, CategoryForm, BrandForm, ProductImageForm
 from ..main.services import AdminService
+
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -250,8 +251,6 @@ def manage_coupons():
     return render_template("admin/coupons.html", coupons=coupons)
 
 
-# Ensure OrderStatus is imported in your admin file:
-from app.models import db, Order, OrderStatus
 
 @admin_bp.route('/orders/update-status/<int:id>/<string:status>', methods=['POST'])
 @login_required
