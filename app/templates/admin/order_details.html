@@ -22,8 +22,8 @@
       </p>
       <p><strong>Email:</strong> {{ order.user.email }}</p>
       <p>
-        <strong>Status:</strong> {{ order.status.value if hasattr(order.status,
-        'value') else order.status }}
+        <strong>Status:</strong>
+        {{ order.status.value if order.status.value is defined else order.status }}
       </p>
       <p><strong>Total:</strong> ₦{{ "{:,.2f}".format(order.total) }}</p>
       <p>
