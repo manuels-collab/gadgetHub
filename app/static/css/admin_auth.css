@@ -65,6 +65,20 @@
 /* Focus and accessibility */
 .form-input:focus { outline: 2px solid rgba(43,124,255,0.18); border-color: var(--primary); }
 
+.form-errors {
+  margin-top: 8px;
+  color: #c0392b;
+  font-size: 0.9rem;
+}
+
+.form-errors span {
+  display: block;
+}
+
+.has-error .form-input {
+  border-color: #c0392b;
+}
+
 /* Small screens: stack and enlarge touch targets */
 @media (max-width: 480px) {
   .admin-auth { min-height: 50vh; padding: 18px; }

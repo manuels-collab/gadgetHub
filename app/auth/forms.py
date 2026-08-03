@@ -1,8 +1,11 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField
-from wtforms import PasswordField, StringField, SubmitField
+from wtforms import PasswordField, StringField, SubmitField, ValidationError
 from wtforms.fields import EmailField
 from wtforms.validators import DataRequired, Email, Length, Regexp
+
+from ..extensions import db
+from ..models.models import User
 
 
 class RegisterForm(FlaskForm):
@@ -57,6 +60,20 @@ class RegisterForm(FlaskForm):
     )
     
     submit = SubmitField(label="Register")
+
+    def validate_username(self, field):
+        existing_user = db.session.execute(
+            db.select(User).filter_by(username=field.data)
+        ).scalar_one_or_none()
+        if existing_user:
+            raise ValidationError("This username is already taken.")
+
+    def validate_email(self, field):
+        existing_user = db.session.execute(
+            db.select(User).filter_by(email=field.data)
+        ).scalar_one_or_none()
+        if existing_user:
+            raise ValidationError("This email is already in use.")
 
 
 class LoginForm(FlaskForm):
