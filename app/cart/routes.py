@@ -1,8 +1,8 @@
-from app.models import db, Order, OrderStatus  
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort
 from flask_login import login_required, current_user
 from ..main.cart_service import CartService
-
+from ..extensions import db
+from ..models.models import Product, Category, Brand, Order, User, ProductImage, Coupon, OrderStatus
 cart_bp = Blueprint('cart', __name__, url_prefix='/cart')
 
 @cart_bp.route('/')
