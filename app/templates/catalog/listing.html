@@ -235,12 +235,14 @@
                             </div>
 
                             <div class="product-brand">
+                                <!----
                                 <img
                                     src="{% if product.brand.logo %}{{ url_for('static', filename='uploads/' + product.brand.logo) }}{% else %}https://via.placeholder.com/70?text=Brand{% endif %}"
                                     alt="{{ product.brand.name }} logo"
                                     class="brand-logo"
                                     onerror="this.onerror=null;this.src='https://via.placeholder.com/70?text=Brand';"
                                 />
+                                -->
                                 <span class="brand-name">{{ product.brand.name }}</span>
                             </div>
 

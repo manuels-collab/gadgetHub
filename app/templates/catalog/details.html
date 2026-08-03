@@ -49,14 +49,16 @@ block content %}
       <span class="product-category">
         {{ product.category.name }} / {{ product.brand.name }}
       </span>
-
+      
+      <!---
       <div class="product-brand-logo">
         <img
-          src="{% if product.brand.logo %}{{ url_for('static', filename='uploads/' + product.brand.logo) }}{% else %}https://via.placeholder.com/70?text=Brand{% endif %}"
-          alt="{{ product.brand.name }} logo"
-          onerror="this.onerror=null;this.src='https://via.placeholder.com/70?text=Brand';"
+        src="{% if product.brand.logo %}{{ url_for('static', filename='uploads/' + product.brand.logo) }}{% else %}https://via.placeholder.com/70?text=Brand{% endif %}"
+        alt="{{ product.brand.name }} logo"
+        onerror="this.onerror=null;this.src='https://via.placeholder.com/70?text=Brand';"
         />
       </div>
+      -->
         <span class="product-rating">
           <i class="fa-solid fa-star"></i>
 
