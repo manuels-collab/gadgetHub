@@ -1,36 +1,106 @@
-{% extends "base.html" %} {% block title %}Admin - Order Details{% endblock %}
-{% block content %}
-<main class="admin-viewport-wrapper" id="order-detail-dashboard">
-  <header class="admin-view-header">
-    <div class="admin-header-title-block">
-      <h1 class="admin-view-title">Order #{{ order.order_number }}</h1>
-      <p class="admin-view-subtitle">
-        Review the full purchase summary and fulfillment state.
-      </p>
-    </div>
-    <a href="{{ url_for('admin.view_orders') }}" class="btn btn-secondary"
-      >Back to Orders</a
-    >
-  </header>
+{% extends "base.html" %} 
+{% block title %}Admin - Order Details{% endblock %} 
+{% block content %} 
+<main class="admin-viewport-wrapper" id="order-detail-dashboard"> 
+    
+    <header class="admin-view-header"> 
+        <div class="admin-header-title-block"> 
+            <h1 class="admin-view-title">Order #{{ order.order_number if order.order_number is defined else order.id }}</h1> 
+            <p class="admin-view-subtitle"> 
+                Review the full purchase summary and fulfillment state. 
+            </p> 
+        </div> 
+        <a href="{{ url_for('admin.view_orders') }}" class="btn btn-secondary">Back to Orders</a> 
+    </header> 
 
-  <section class="admin-table-section">
-    <div class="dashboard-card">
-      <h2>Order Summary</h2>
-      <p>
-        <strong>Customer:</strong> {{ order.user.first_name }} {{
-        order.user.last_name }} (@{{ order.user.username }})
-      </p>
-      <p><strong>Email:</strong> {{ order.user.email }}</p>
-      <p>
-        <strong>Status:</strong>
-        {{ order.status.value if order.status.value is defined else order.status }}
-      </p>
-      <p><strong>Total:</strong> ₦{{ "{:,.2f}".format(order.total) }}</p>
-      <p>
-        <strong>Placed:</strong> {{ order.created_at.strftime('%Y-%m-%d %H:%M')
-        }}
-      </p>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages-container" style="margin-bottom: 1.5rem;">
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}" role="alert" style="padding: 1rem; border-radius: 4px; margin-bottom: 0.5rem;">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: start;">
+        
+        <!-- Left Side: Order Information Card -->
+        <section class="admin-table-section" style="margin: 0;"> 
+            <div class="dashboard-card" style="padding: 1.5rem; background: #fff; border-radius: 8px; border: 1px solid #eee;"> 
+                <h2 style="margin-top: 0; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid #f5f5f5;">Order Summary</h2> 
+                
+                <p style="margin-bottom: 0.75rem;"> 
+                    <strong>Customer:</strong> 
+                    {% if order.user %}
+                        {{ order.user.first_name }} {{ order.user.last_name }} (@{{ order.user.username }}) 
+                    {% else %}
+                        <span class="txt-muted" style="color: #888; font-style: italic;">Guest / Deleted Account</span>
+                    {% endif %}
+                </p> 
+                
+                <p style="margin-bottom: 0.75rem;">
+                    <strong>Email:</strong> 
+                    {{ order.user.email if order.user else 'N/A' }}
+                </p> 
+                
+                <p style="margin-bottom: 0.75rem;"> 
+                    <strong>Status:</strong> 
+                    <span class="status-indicator-badge status-{{ order.status|lower if order.status else 'unknown' }}" style="padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: bold; font-size: 0.9rem;">
+                        {{ order.status.value if order.status.value is defined else order.status }} 
+                    </span>
+                </p> 
+                
+                <p style="margin-bottom: 0.75rem;">
+                    <strong>Total:</strong> 
+                    <span style="font-size: 1.1rem; font-weight: bold; color: #2ecc71;">₦{{ "{:,.2f}".format(order.total) if order.total else '0.00' }}</span>
+                </p> 
+                
+                <p style="margin-bottom: 0;"> 
+                    <strong>Placed:</strong> 
+                    {{ order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else 'N/A' }} 
+                </p> 
+            </div> 
+        </section>
+
+        <!-- Right Side: Order Action controls -->
+        <aside class="admin-actions-sidebar">
+            <div class="dashboard-card" style="padding: 1.5rem; background: #fff; border-radius: 8px; border: 1px solid #eee;">
+                <h2 style="margin-top: 0; margin-bottom: 1.25rem; padding-bottom: 0.5rem; border-bottom: 1px solid #f5f5f5; font-size: 1.2rem;">Fulfillment Actions</h2>
+                
+                {% set current_status = order.status.value|lower if order.status.value is defined else order.status|lower %}
+                
+                {% if current_status not in ['completed', 'cancelled'] %}
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        
+                        <!-- Mark as Completed Button -->
+                        <form action="{{ url_for('admin.update_order_status', id=order.id, status='completed') }}" method="POST">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; text-align: center; cursor: pointer; border: none; font-size: 0.95rem; font-weight: bold;">
+                                <i class="fa-solid fa-circle-check"></i> Mark as Completed
+                            </button>
+                        </form>
+
+                        <!-- Mark as Cancelled Button -->
+                        <form action="{{ url_for('admin.update_order_status', id=order.id, status='cancelled') }}" method="POST" onsubmit="return confirm('Are you sure you want to officially cancel this order?');">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-danger" style="width: 100%; padding: 0.75rem; text-align: center; cursor: pointer; color: white; background-color: #dc3545; border: none; border-radius: 4px; font-size: 0.95rem; font-weight: bold;">
+                                <i class="fa-solid fa-circle-xmark"></i> Cancel Order
+                            </button>
+                        </form>
+
+                    </div>
+                {% else %}
+                    <p style="color: #777; font-size: 0.9rem; text-align: center; margin: 0; padding: 1rem 0;">
+                        <i class="fa-solid fa-lock" style="margin-right: 0.25rem;"></i> This order transaction is closed and cannot be updated.
+                    </p>
+                {% endif %}
+            </div>
+        </aside>
+
     </div>
-  </section>
-</main>
+
+</main> 
 {% endblock %}

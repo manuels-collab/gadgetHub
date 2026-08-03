@@ -249,3 +249,34 @@ def manage_coupons():
     coupons = AdminService.get_all_coupons()
     return render_template("admin/coupons.html", coupons=coupons)
 
+
+# Ensure OrderStatus is imported in your admin file:
+from app.models import db, Order, OrderStatus
+
+@admin_bp.route('/orders/update-status/<int:id>/<string:status>', methods=['POST'])
+@login_required
+def update_order_status(id, status):
+    """Allows administrative control pipelines to toggle order fulfillment parameters."""
+    if not current_user.is_admin:
+        abort(403)
+        
+    order = db.session.get(Order, id) or abort(404)
+    
+    try:
+        if status == 'completed':
+            order.status = OrderStatus.DELIVERED  # Maps to your Enum 'Delivered' final stage
+            flash(f"Order #{order.order_number} has been updated to Delivered.", "success")
+        elif status == 'cancelled':
+            order.status = OrderStatus.CANCELLED  # Maps to your Enum 'Cancelled'
+            flash(f"Order #{order.order_number} has been cancelled successfully.", "warning")
+        else:
+            flash("Invalid action identifier flag payload status.", "danger")
+            return redirect(url_for('admin.view_order', id=order.id))
+            
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        flash("Database runtime exception mapping updated Enum structures.", "danger")
+        
+    return redirect(url_for('admin.view_order', id=order.id))
+
