@@ -10,10 +10,8 @@
                 Review chosen selections and finalize parameters before checkout 
             </p> 
         </div>
-<a href="{{ url_for('cart.view_orders') }}" class="btn btn-primary btn-full-width cart-checkout-btn">
-    <i class="fa-solid fa-clock-rotate-left"></i> <span  class="btn btn-primary">View My Orders</span>
-</a>
-
+        
+        
     </header> 
 
     {% with messages = get_flashed_messages(with_categories=true) %} 
@@ -41,7 +39,7 @@
                             <h3 class="cart-product-title"> 
                                 <a href="/product/{{ item.product_id }}"> {{ item.product.name }} </a> 
                             </h3> 
-                            <p class="cart-unit-price"> Unit Price: ${{ "{:,.2f}".format(item_price / 100) }} </p> 
+                            <p class="cart-unit-price"> Unit Price: ₦{{ "{:,.2f}".format(item_price) }} </p> 
                         </div> 
                         <div class="cart-item-quantity-controls-block"> 
                             <form action="{{ url_for('cart.update_quantity', product_id=item.product_id) }}" method="POST" class="cart-quantity-form"> 
@@ -50,7 +48,7 @@
                             </form> 
                         </div> 
                         <div class="cart-item-subtotal-price-block"> 
-                            ${{ "{:,.2f}".format((item_price * item.quantity) / 100) }} 
+                            ₦{{ "{:,.2f}".format((item_price * item.quantity)) }} 
                         </div> 
                         <div class="cart-item-removal-action-block"> 
                             <form action="{{ url_for('cart.remove_item', product_id=item.product_id) }}" method="POST"> 
@@ -89,7 +87,7 @@
                 </div> 
             </aside> 
         </div> 
-    {% else %} 
+        {% else %} 
         <div class="empty-cart-fallback-block" id="empty-cart-msg-wrapper" style="text-align: center; padding: 3rem 1rem;"> 
             <h2>Your cart is empty</h2> 
             <p> Looks like you haven't added any products to your catalog collection yet. </p> 
@@ -102,6 +100,9 @@
 
             </div>
         </div> 
-    {% endif %} 
+        {% endif %} 
+        <a href="{{ url_for('cart.view_orders') }}" class="btn btn-primary btn-full-width cart-checkout-btn">
+            <i class="fa-solid fa-clock-rotate-left"></i> <span  class="btn btn-primary">View My Orders</span>
+        </a>
 </main> 
 {% endblock %}
