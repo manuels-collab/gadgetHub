@@ -11,8 +11,9 @@ block content %}
     <div class="product-gallery">
       <div class="product-main-image">
         <img
-          src="{% if product.image and product.image != 'placeholder.png' %}{{ url_for('static', filename='uploads/' + product.image) }}{% else %}https://placeholder.com{% endif %}"
+          src="{% if product.image and product.image != 'placeholder.png' %}{{ url_for('static', filename='uploads/' + product.image) }}{% else %}https://via.placeholder.com/700x500?text=No+Image{% endif %}"
           alt="{{ product.name }}"
+          onerror="this.onerror=null;this.src='https://via.placeholder.com/700x500?text=No+Image';"
         />
       </div>
 
@@ -33,6 +34,7 @@ block content %}
             <img
               src="{{ url_for('static', filename='uploads/' + gallery_img.image) }}"
               alt="Gallery Image"
+              onerror="this.onerror=null;this.src='https://via.placeholder.com/150?text=No+Image';"
             />
           </button>
           {% endfor %}
@@ -48,9 +50,13 @@ block content %}
         {{ product.category.name }} / {{ product.brand.name }}
       </span>
 
-      <h1 class="product-title">{{ product.name }}</h1>
-
-      <div class="product-meta">
+      <div class="product-brand-logo">
+        <img
+          src="{% if product.brand.logo %}{{ url_for('static', filename='uploads/' + product.brand.logo) }}{% else %}https://via.placeholder.com/70?text=Brand{% endif %}"
+          alt="{{ product.brand.name }} logo"
+          onerror="this.onerror=null;this.src='https://via.placeholder.com/70?text=Brand';"
+        />
+      </div>
         <span class="product-rating">
           <i class="fa-solid fa-star"></i>
 

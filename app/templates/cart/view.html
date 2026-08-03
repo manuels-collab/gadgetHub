@@ -1,161 +1,146 @@
-{% extends "base.html" %}
-
-{% block title %}Your Shopping Cart{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Your Shopping Cart{% endblock %} {%
+block content %}
 <main class="cart-viewport-container container" id="customer-cart-page">
+  <header class="cart-view-header">
+    <h1 class="cart-view-title" id="txt-cart-title">Your Shopping Cart</h1>
+    <p class="cart-view-subtitle" id="txt-cart-subtitle">
+      Review chosen selections and finalize parameters before checkout
+    </p>
+  </header>
 
-    <header class="cart-view-header">
-        <h1 class="cart-view-title" id="txt-cart-title">Your Shopping Cart</h1>
-        <p class="cart-view-subtitle" id="txt-cart-subtitle">
-            Review chosen selections and finalize parameters before checkout
-        </p>
-    </header>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="flash-messages-container" id="cart-alert-wrapper">
-                {% for category, message in messages %}
-                    <div class="flash-message flash-{{ category }}" role="alert">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
-
-    {% if cart.cart_item %}
-    <div class="cart-split-layout-workspace">
-
-        <section class="cart-items-lines-panel" id="cart-items-showroom">
-
-            {% for item in cart.cart_item %}
-                {% set item_price = item.product.discounted_price if item.product.discounted_price else item.product.price %}
-
-                <article class="cart-line-card" id="cart-row-item-{{ item.product_id }}">
-
-                    <div class="cart-thumbnail-frame">
-                        <img
-                            src="{% if item.product.image and item.product.image != 'placeholder.png' %}{{ url_for('static', filename='uploads/' + item.product.image) }}{% else %}https://placeholder.com{% endif %}"
-                            alt="{{ item.product.name }}"
-                            class="cart-product-image">
-                    </div>
-
-                    <div class="cart-item-details-block">
-                        <h3 class="cart-product-title">
-                            <a href="/product/{{ item.product_id }}">
-                                {{ item.product.name }}
-                            </a>
-                        </h3>
-
-                        <p class="cart-unit-price">
-                            Unit Price:
-                            ${{ "{:,.2f}".format(item_price / 100) }}
-                        </p>
-                    </div>
-
-                    <div class="cart-item-quantity-controls-block">
-                        <form action="{{ url_for('cart.update_quantity', product_id=item.product_id) }}" method="POST" class="cart-quantity-form">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-
-                            <input
-                                type="number"
-                                name="quantity"
-                                value="{{ item.quantity }}"
-                                min="1"
-                                max="{{ item.product.stock }}"
-                                class="cart-quantity-input"
-                                onchange="this.form.submit()">
-                        </form>
-                    </div>
-
-                    <div class="cart-item-subtotal-price-block">
-                        ${{ "{:,.2f}".format((item_price * item.quantity) / 100) }}
-                    </div>
-
-                    <div class="cart-item-removal-action-block">
-                        <form action="{{ url_for('cart.remove_item', product_id=item.product_id) }}" method="POST">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-
-                            <button
-                                type="submit"
-                                class="cart-remove-btn"
-                                title="Remove Item">
-                                &times;
-                            </button>
-                        </form>
-                    </div>
-
-                </article>
-
-            {% endfor %}
-
-        </section>
-
-        <aside class="cart-financial-ledger-sidebar" id="cart-ledger-card">
-
-            <div class="cart-summary-card">
-
-                <h3 class="cart-summary-title">
-                    Order Summary
-                </h3>
-
-                <div class="summary-row">
-                    <span>Items Subtotal:</span>
-                    <span>₦{{ "{:,.2f}".format(subtotal) }}</span>
-                </div>
-
-                <div class="summary-row">
-                    <span>Shipping:</span>
-
-                    <span>
-                        {% if shipping_fee == 0 %}
-                            <strong class="free-shipping">FREE</strong>
-                        {% else %}
-                            ₦{{ "{:,.2f}".format(shipping_fee) }}
-                        {% endif %}
-                    </span>
-                </div>
-
-                <div class="summary-row">
-                    <span>Platform Tax (5%):</span>
-                    <span>₦{{ "{:,.2f}".format(tax) }}</span>
-                </div>
-
-                <div class="summary-total-row">
-                    <span>Grand Total:</span>
-                    <span class="grand-total-price">
-                        ₦{{ "{:,.2f}".format(total)}}
-                    </span>
-                </div>
-
-                <a href="/checkout" class="btn btn-primary btn-full-width cart-checkout-btn">
-                    Proceed to Checkout →
-                </a>
-
-            </div>
-
-        </aside>
-
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if
+  messages %}
+  <div class="flash-messages-container" id="cart-alert-wrapper">
+    {% for category, message in messages %}
+    <div class="flash-message flash-{{ category }}" role="alert">
+      {{ message }}
     </div>
+    {% endfor %}
+  </div>
+  {% endif %} {% endwith %} {% if cart.cart_item %}
+  <div class="cart-split-layout-workspace">
+    <section class="cart-items-lines-panel" id="cart-items-showroom">
+      {% for item in cart.cart_item %} {% set item_price =
+      item.product.discounted_price if item.product.discounted_price else
+      item.product.price %}
 
-    {% else %}
+      <article class="cart-line-card" id="cart-row-item-{{ item.product_id }}">
+        <div class="cart-thumbnail-frame">
+          <img
+            src="{% if item.product.image and item.product.image != 'placeholder.png' %}{{ url_for('static', filename='uploads/' + item.product.image) }}{% else %}https://via.placeholder.com/140?text=No+Image{% endif %}"
+            alt="{{ item.product.name }}"
+            class="cart-product-image"
+            onerror="
+              this.onerror = null;
+              this.src = 'https://via.placeholder.com/140?text=No+Image';
+            "
+          />
+        </div>
 
-    <div class="empty-cart-fallback-block" id="empty-cart-msg-wrapper">
+        <div class="cart-item-details-block">
+          <h3 class="cart-product-title">
+            <a href="/product/{{ item.product_id }}">
+              {{ item.product.name }}
+            </a>
+          </h3>
 
-        <h2>Your cart is empty</h2>
+          <p class="cart-unit-price">
+            Unit Price: ${{ "{:,.2f}".format(item_price / 100) }}
+          </p>
+        </div>
 
-        <p>
-            Looks like you haven't added any products to your catalog collection yet.
-        </p>
+        <div class="cart-item-quantity-controls-block">
+          <form
+            action="{{ url_for('cart.update_quantity', product_id=item.product_id) }}"
+            method="POST"
+            class="cart-quantity-form"
+          >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
-        <a href="/products" class="btn btn-primary">
-            Browse Catalog
+            <input
+              type="number"
+              name="quantity"
+              value="{{ item.quantity }}"
+              min="1"
+              max="{{ item.product.stock }}"
+              class="cart-quantity-input"
+              onchange="this.form.submit()"
+            />
+          </form>
+        </div>
+
+        <div class="cart-item-subtotal-price-block">
+          ${{ "{:,.2f}".format((item_price * item.quantity) / 100) }}
+        </div>
+
+        <div class="cart-item-removal-action-block">
+          <form
+            action="{{ url_for('cart.remove_item', product_id=item.product_id) }}"
+            method="POST"
+          >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+            <button type="submit" class="cart-remove-btn" title="Remove Item">
+              &times;
+            </button>
+          </form>
+        </div>
+      </article>
+
+      {% endfor %}
+    </section>
+
+    <aside class="cart-financial-ledger-sidebar" id="cart-ledger-card">
+      <div class="cart-summary-card">
+        <h3 class="cart-summary-title">Order Summary</h3>
+
+        <div class="summary-row">
+          <span>Items Subtotal:</span>
+          <span>₦{{ "{:,.2f}".format(subtotal) }}</span>
+        </div>
+
+        <div class="summary-row">
+          <span>Shipping:</span>
+
+          <span>
+            {% if shipping_fee == 0 %}
+            <strong class="free-shipping">FREE</strong>
+            {% else %} ₦{{ "{:,.2f}".format(shipping_fee) }} {% endif %}
+          </span>
+        </div>
+
+        <div class="summary-row">
+          <span>Platform Tax (5%):</span>
+          <span>₦{{ "{:,.2f}".format(tax) }}</span>
+        </div>
+
+        <div class="summary-total-row">
+          <span>Grand Total:</span>
+          <span class="grand-total-price"> ₦{{ "{:,.2f}".format(total)}} </span>
+        </div>
+
+        <a
+          href="/checkout"
+          class="btn btn-primary btn-full-width cart-checkout-btn"
+        >
+          Proceed to Checkout →
         </a>
+      </div>
+    </aside>
+  </div>
 
-    </div>
+  {% else %}
 
-    {% endif %}
+  <div class="empty-cart-fallback-block" id="empty-cart-msg-wrapper">
+    <h2>Your cart is empty</h2>
 
+    <p>
+      Looks like you haven't added any products to your catalog collection yet.
+    </p>
+
+    <a href="/products" class="btn btn-primary"> Browse Catalog </a>
+  </div>
+
+  {% endif %}
 </main>
 {% endblock %}

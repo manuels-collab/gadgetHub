@@ -1,114 +1,99 @@
-{% extends "base.html" %}
-
-{% block title %}Manage Product Images{% endblock %}
-
+{% extends "base.html" %} {% block title %}Manage Product Images{% endblock %}
 {% block content %}
 <main class="admin-viewport-wrapper" id="gallery-management-dashboard">
+  <header class="admin-view-header">
+    <div>
+      <h1 class="admin-view-title">Gallery Management</h1>
+      <p class="admin-view-subtitle">
+        Managing images for <strong>{{ product.name }}</strong>
+      </p>
+    </div>
 
-    <header class="admin-view-header">
-        <div>
-            <h1 class="admin-view-title">Gallery Management</h1>
-            <p class="admin-view-subtitle">
-                Managing images for <strong>{{ product.name }}</strong>
-            </p>
+    <a href="{{ url_for('admin.manage_inventory') }}" class="btn btn-secondary">
+      Back to Inventory
+    </a>
+  </header>
+
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if
+  messages %}
+  <div class="flash-messages-container">
+    {% for category, message in messages %}
+    <div class="flash-message flash-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %} {% endwith %}
+
+  <section class="admin-split-layout-grid">
+    <article class="admin-split-form-panel-card">
+      <h3 class="panel-card-heading">Upload Image</h3>
+
+      <form
+        method="POST"
+        enctype="multipart/form-data"
+        novalidate
+        class="admin-split-embedded-form"
+      >
+        {{ form.csrf_token }}
+
+        <div
+          class="form-field-wrapper {% if form.image.errors %}field-has-error{% endif %}"
+        >
+          {{ form.image.label(class="form-label") }} {{
+          form.image(class="form-input file-input") }} {% for error in
+          form.image.errors %}
+          <span class="error-message-item">{{ error }}</span>
+          {% endfor %}
         </div>
 
-        <a href="{{ url_for('admin.manage_inventory') }}" class="btn btn-secondary">
-            Back to Inventory
-        </a>
-    </header>
+        {{ form.submit(class="btn btn-primary btn-full-width") }}
+      </form>
+    </article>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="flash-messages-container">
-                {% for category, message in messages %}
-                    <div class="flash-message flash-{{ category }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
+    <article class="admin-split-data-panel-card">
+      <h3 class="panel-card-heading">
+        Gallery Images ({{ product.product_image|length }})
+      </h3>
+
+      <div class="admin-gallery-display-grid">
+        {% if product.product_image %} {% for img in product.product_image %}
+
+        <div class="gallery-card-item">
+          <img
+            src="{{ url_for('static', filename='uploads/' + img.image) }}"
+            alt="Product Image"
+            class="gallery-image"
+            onerror="
+              this.onerror = null;
+              this.src = 'https://via.placeholder.com/220?text=No+Image';
+            "
+          />
+
+          <form
+            action="{{ url_for('admin.delete_product_image', image_id=img.id) }}"
+            method="POST"
+            class="gallery-delete-form"
+            onsubmit="return confirm('Remove this image?');"
+          >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+            <button
+              type="submit"
+              class="btn btn-danger btn-small btn-full-width"
+            >
+              Delete
+            </button>
+          </form>
+        </div>
+
+        {% endfor %} {% else %}
+
+        <p class="gallery-empty-state">
+          No gallery images have been uploaded for this product.
+        </p>
+
         {% endif %}
-    {% endwith %}
-
-    <section class="admin-split-layout-grid">
-
-        <article class="admin-split-form-panel-card">
-            <h3 class="panel-card-heading">Upload Image</h3>
-
-            <form method="POST" enctype="multipart/form-data" novalidate class="admin-split-embedded-form">
-
-                {{ form.csrf_token }}
-
-                <div class="form-field-wrapper {% if form.image.errors %}field-has-error{% endif %}">
-                    {{ form.image.label(class="form-label") }}
-                    {{ form.image(class="form-input file-input") }}
-
-                    {% for error in form.image.errors %}
-                        <span class="error-message-item">{{ error }}</span>
-                    {% endfor %}
-                </div>
-
-                {{ form.submit(class="btn btn-primary btn-full-width") }}
-
-            </form>
-        </article>
-
-        <article class="admin-split-data-panel-card">
-
-            <h3 class="panel-card-heading">
-                Gallery Images ({{ product.product_image|length }})
-            </h3>
-
-            <div class="admin-gallery-display-grid">
-
-                {% if product.product_image %}
-
-                    {% for img in product.product_image %}
-
-                        <div class="gallery-card-item">
-
-                            <img
-                                src="{{ url_for('static', filename='uploads/' + img.image) }}"
-                                alt="Product Image"
-                                class="gallery-image"
-                            >
-
-                            <form
-                                action="{{ url_for('admin.delete_product_image', image_id=img.id) }}"
-                                method="POST"
-                                class="gallery-delete-form"
-                                onsubmit="return confirm('Remove this image?');"
-                            >
-
-                                <input
-                                    type="hidden"
-                                    name="csrf_token"
-                                    value="{{ csrf_token() }}"
-                                >
-
-                                <button type="submit" class="btn btn-danger btn-small btn-full-width">
-                                    Delete
-                                </button>
-
-                            </form>
-
-                        </div>
-
-                    {% endfor %}
-
-                {% else %}
-
-                    <p class="gallery-empty-state">
-                        No gallery images have been uploaded for this product.
-                    </p>
-
-                {% endif %}
-
-            </div>
-
-        </article>
-
-    </section>
-
+      </div>
+    </article>
+  </section>
 </main>
 {% endblock %}

@@ -203,9 +203,10 @@
                             class="product-image-link">
 
                             <img
-                                src="{% if product.image and product.image != 'placeholder.png' %}{{ url_for('static', filename='uploads/' + product.image) }}{% else %}https://placeholder.com{% endif %}"
+                                src="{% if product.image and product.image != 'placeholder.png' %}{{ url_for('static', filename='uploads/' + product.image) }}{% else %}https://via.placeholder.com/280x210?text=No+Image{% endif %}"
                                 alt="{{ product.name }}"
-                                class="product-image">
+                                class="product-image"
+                                onerror="this.onerror=null;this.src='https://via.placeholder.com/280x210?text=No+Image';">
 
                         </a>
 
@@ -238,6 +239,7 @@
                                     src="{% if product.brand.logo %}{{ url_for('static', filename='uploads/' + product.brand.logo) }}{% else %}https://via.placeholder.com/70?text=Brand{% endif %}"
                                     alt="{{ product.brand.name }} logo"
                                     class="brand-logo"
+                                    onerror="this.onerror=null;this.src='https://via.placeholder.com/70?text=Brand';"
                                 />
                                 <span class="brand-name">{{ product.brand.name }}</span>
                             </div>

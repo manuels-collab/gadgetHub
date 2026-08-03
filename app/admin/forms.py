@@ -11,7 +11,7 @@ class ProductForm(FlaskForm):
     stock = IntegerField(label="Stock Quantity", validators=[DataRequired(), NumberRange(min=0)])
     sku = IntegerField(label="SKU Code", validators=[DataRequired()])
     is_featured = BooleanField(label="Mark as Featured", default=True)
-    image = FileField(label="Product Thumbnail", validators=[FileAllowed(["jpg", "jpeg", "png", "webp", "jfif"])])
+    image = FileField(label="Product Thumbnail", validators=[FileAllowed(["jpg", "jpeg", "png", "webp", "jfif", "gif", "bmp", "svg"], message="Only image files are allowed.")])
     brand_id = SelectField(label="Assign Brand", coerce=int, validators=[DataRequired()])
     category_id = SelectField(label="Assign Category", coerce=int, validators=[DataRequired()])
     submit = SubmitField(label="Save Asset Changes")
@@ -25,7 +25,7 @@ class CategoryForm(FlaskForm):
 class BrandForm(FlaskForm):
     name = StringField(label="Brand Name", validators=[DataRequired(), Length(max=50)])
     country = StringField(label="Country of Origin", validators=[DataRequired(), Length(max=40)])
-    logo = FileField(label="Brand Logo Image", validators=[FileAllowed(["jpg", "jpeg", "png", "webp", "jfif"])])
+    logo = FileField(label="Brand Logo Image", validators=[FileAllowed(["jpg", "jpeg", "png", "webp", "jfif", "gif", "bmp", "svg"], message="Only image files are allowed.")])
     submit = SubmitField(label="Register Brand")
 
 class ProductImageForm(FlaskForm):

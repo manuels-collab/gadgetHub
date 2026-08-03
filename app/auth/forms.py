@@ -55,7 +55,7 @@ class RegisterForm(FlaskForm):
     profile_image = FileField(
         label="Profile Image",
         validators=[
-            FileAllowed(['jpg', 'jpeg', 'png', 'gif'], message="Only JPEG, JPG, PNG, and GIF images are allowed.")
+            FileAllowed(['jpg', 'jpeg', 'png', 'webp', 'jfif', 'gif', 'bmp', 'svg'], message="Only image files are allowed.")
         ]
     )
     
