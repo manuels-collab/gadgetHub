@@ -112,6 +112,51 @@ def manage_brands():
     return render_template("admin/brands.html", brands=brands, form=form)
 
 
+@admin_bp.route('/brands/edit/<int:id>', methods=['GET', 'POST'])
+def edit_brand(id):
+    brand = db.session.get(Brand, id) or abort(404)
+
+    form = BrandForm(obj=brand)
+    
+    if form.validate_on_submit():
+        if form.logo.data:
+            logo_name = AdminService.process_file_upload(form.logo.data)
+            if logo_name:
+                brand.logo = logo_name
+                
+        brand.name = form.name.data
+        brand.country = form.country.data
+        
+        try:
+            db.session.commit()
+            flash(f"Brand '{brand.name}' updated successfully!", "success")
+            return redirect(url_for('admin.manage_brands'))
+        except IntegrityError:
+            db.session.rollback()
+            flash("Failed to update brand. A brand with that name may already exist.", "danger")
+        except Exception:
+            db.session.rollback()
+            flash("Failed to update brand due to a system error.", "danger")
+            
+    return render_template("admin/brand_form.html", form=form, brand=brand, action="Edit")
+
+@admin_bp.route('/brands/delete/<int:id>', methods=['POST'])
+def delete_brand(id):
+    brand = db.session.get(Brand, id) or abort(404)
+    brand_name = brand.name
+    
+    db.session.delete(brand)
+    try:
+        db.session.commit()
+        flash(f"Brand '{brand_name}' has been successfully deleted.", "warning")
+    except Exception:
+        db.session.rollback()
+        flash(f"Unable to delete '{brand_name}'. It may be tied to existing active products.", "danger")
+        
+    return redirect(url_for('admin.manage_brands'))
+
+
+
 @admin_bp.route('/orders')
 def view_orders():
     orders = db.session.execute(db.select(Order).order_by(Order.created_at.desc())).scalars().all()
