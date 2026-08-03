@@ -10,10 +10,10 @@
                 Review chosen selections and finalize parameters before checkout 
             </p> 
         </div>
-        <!-- Proactive Navigation Anchor to Order History Tracking -->
-        <a href="{{ url_for('user.view_orders') if hasattr(url_for, 'user.view_orders') else '/orders' }}" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
-            <i class="fa-solid fa-clock-rotate-left"></i> View My Orders
-        </a>
+<a href="{{ url_for('cart.view_orders') }}" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+    <i class="fa-solid fa-clock-rotate-left"></i> View My Orders
+</a>
+
     </header> 
 
     {% with messages = get_flashed_messages(with_categories=true) %} 
@@ -95,9 +95,11 @@
             <p> Looks like you haven't added any products to your catalog collection yet. </p> 
             <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem;">
                 <a href="/products" class="btn btn-primary"> Browse Catalog </a> 
-                <a href="{{ url_for('user.view_orders') if hasattr(url_for, 'user.view_orders') else '/orders' }}" class="btn btn-secondary">
-                    <i class="fa-solid fa-clock-rotate-left"></i> Check Order History
-                </a>
+
+<a href="{{ url_for('cart.view_orders') }}" class="btn btn-secondary">
+    <i class="fa-solid fa-clock-rotate-left"></i> Check Order History
+</a>
+
             </div>
         </div> 
     {% endif %} 
