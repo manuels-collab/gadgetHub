@@ -15,7 +15,7 @@ connection_string = URL.create(
     database=os.getenv("DB_NAME")
 )
 
-
+#CHANGED THE DB URL
 from flask_login import current_user
 
 from .models.models import User
