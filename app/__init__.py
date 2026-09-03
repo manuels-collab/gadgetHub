@@ -1,36 +1,36 @@
-from flask import Flask, redirect, url_for
-from .extensions import db, bcrypt, login_manager, csrf, migrate
-from sqlalchemy.engine import URL
 import os
+from flask import Flask, redirect, url_for
+from flask_login import current_user
 from dotenv import load_dotenv
+from sqlalchemy import func
+from sqlalchemy.engine import URL
+
+from .extensions import db, bcrypt, login_manager, csrf, migrate
+from .models.models import User, Wishlist
+from .main.cart_service import CartService
 
 load_dotenv()
 
+# Build connection string fallback if DATABASE_URL or DATABASE_URI isn't set directly
 connection_string = URL.create(
     drivername="postgresql+psycopg",
     username=os.getenv("DB_USERNAME"),
     password=os.getenv("DB_PASSWORD"),
-    host=os.getenv('DB_HOST'),
-    port=int(os.getenv("DB_PORT")) if os.getenv("DB_PORT") else None,
+    host=os.getenv("DB_HOST", "localhost"),
+    port=int(os.getenv("DB_PORT", 5432)),  # Default PostgreSQL port is 5432
     database=os.getenv("DB_NAME")
 )
-
-#CHANGED THE DB URL
-from flask_login import current_user
-
-from .models.models import User
 
 def create_app():
     app = Flask(__name__)
 
     app.config.from_object("config.Config")
     app.config["SQLALCHEMY_ECHO"] = False
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URI") or str(connection_string)
-
-    print("=" * 60)
-    print("DATABASE_URI env:", os.getenv("DATABASE_URI"))
-    print("SQLALCHEMY_DATABASE_URI:", app.config.get("SQLALCHEMY_DATABASE_URI"))
-    print("=" * 60)
+    
+    # Check DATABASE_URL first (Render default), then DATABASE_URI, then constructed string
+    app.config["SQLALCHEMY_DATABASE_URI"] = (
+        os.getenv("DATABASE_URL") or os.getenv("DATABASE_URI") or str(connection_string)
+    )
 
     db.init_app(app)
     bcrypt.init_app(app)
@@ -42,6 +42,7 @@ def create_app():
     login_manager.login_message_category = "warning"
     login_manager.session_protection = "strong"
 
+    # Blueprint Registrations
     from .auth.routes import auth
     from .main.routes import main_bp
     from .admin.routes import admin_bp
@@ -49,6 +50,7 @@ def create_app():
     from .cart.routes import cart_bp
     from .wishlist.routes import wishlist_bp
     from .checkout.routes import checkout_bp
+
     app.register_blueprint(auth)
     app.register_blueprint(cart_bp)
     app.register_blueprint(main_bp)
@@ -60,24 +62,11 @@ def create_app():
     with app.app_context():
         db.create_all()
 
-    # Root route is served by the main blueprint `index` view.
-    # Keep this helper route separate so it does not override `/`.
     @app.route("/_test")
     def test():
         return redirect(url_for("auth.dashboard"))
 
-    @app.context_processor
-    def inject_cart_count():
-        """Globally injects the live shopping cart items count into all template headers."""
-        if current_user and current_user.is_authenticated:
-            totals = CartService.calculate_cart_totals(current_user.id)
-            return dict(global_cart_count=totals["items_count"])
-        return dict(global_cart_count=0)
-
-    from .main.cart_service import CartService
-    from app.models.models import Wishlist
-    from sqlalchemy import func
-
+    # Combined context processor (avoid duplicating global_cart_count logic)
     @app.context_processor
     def inject_global_navbar_counters():
         if current_user and current_user.is_authenticated:
