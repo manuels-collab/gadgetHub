@@ -22,10 +22,10 @@ def create_app():
 
     app.config.from_object("config.Config")
     app.config["SQLALCHEMY_ECHO"] = False
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL") or str(connection_string)
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URI") or str(connection_string)
 
     print("=" * 60)
-    print("DATABASE_URL env:", os.getenv("DATABASE_URL"))
+    print("DATABASE_URI env:", os.getenv("DATABASE_URI"))
     print("SQLALCHEMY_DATABASE_URI:", app.config.get("SQLALCHEMY_DATABASE_URI"))
     print("=" * 60)
 
